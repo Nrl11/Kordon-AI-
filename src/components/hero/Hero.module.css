@@ -1,0 +1,357 @@
+.hero {
+  padding: calc(var(--nav-h) + clamp(12px, 3vh, 36px)) 0 clamp(48px, 8vh, 96px);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: minmax(0, 0.78fr) minmax(0, 1.22fr);
+  align-items: center;
+  gap: clamp(24px, 3vw, 56px);
+}
+
+/* ——— тезис ——— */
+.copy {
+  max-width: 600px;
+  animation: rise 0.9s var(--ease-out) both;
+}
+.title {
+  font-family: var(--f-display);
+  font-weight: 700;
+  font-size: clamp(2.9rem, 0.9rem + 4.25vw, 6rem);
+  line-height: 0.93;
+  letter-spacing: -0.05em;
+  color: var(--ink);
+  text-wrap: balance;
+}
+.sub {
+  max-width: 28ch;
+  margin-top: clamp(20px, 3vh, 32px);
+  font-size: clamp(1.1rem, 0.95rem + 0.45vw, 1.375rem);
+  line-height: 1.45;
+  color: var(--ink-2);
+}
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 14px 30px;
+  margin-top: clamp(26px, 4vh, 44px);
+}
+.textLink {
+  font-weight: 600;
+  color: var(--ink);
+  text-decoration: underline;
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 6px;
+  text-decoration-color: var(--rule-2);
+  transition: text-decoration-color 0.2s;
+}
+.textLink:hover {
+  text-decoration-color: var(--ink);
+}
+
+/* ——— схема ——— */
+.figure {
+  margin: 0;
+  animation: rise 1s 0.15s var(--ease-out) both;
+}
+.stage {
+  position: relative;
+  /* студийный свет за знаком: чуть светлее в центре, мягко к краям */
+  background: radial-gradient(60% 58% at 46% 50%, #ffffff 0%, #f6f8fb 62%, rgba(246, 248, 251, 0) 100%);
+  aspect-ratio: 8.2 / 6.1;
+  max-height: calc(100svh - var(--nav-h) - 170px);
+  width: 100%;
+  margin-inline: auto;
+}
+.canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  opacity: 0;
+  transition: opacity 0.8s var(--ease-out);
+}
+.stage[data-ready] .canvas {
+  opacity: 1;
+}
+.fallback {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: var(--ink);
+}
+
+.labels {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.label {
+  position: absolute;
+  left: 0;
+  top: 0;
+  will-change: transform;
+}
+.label[data-hide] {
+  display: none;
+}
+.dot {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--paper);
+  border: 2px solid var(--ink-3);
+  transform: translate(-50%, -50%);
+  transition:
+    background-color 0.25s,
+    border-color 0.25s,
+    transform 0.25s var(--ease-out);
+}
+.label[data-kind="dept"] .dot,
+.label[data-kind="local"] .dot {
+  border-color: var(--blue-light);
+}
+.label[data-kind="model"] .dot {
+  border-color: var(--gold-deep);
+}
+.label[data-on] .dot {
+  background: var(--blue);
+  border-color: var(--blue);
+  transform: translate(-50%, -50%) scale(1.35);
+}
+.label[data-kind="model"][data-on] .dot {
+  background: var(--gold);
+  border-color: var(--gold-deep);
+}
+.labelText {
+  position: absolute;
+  left: 0;
+  top: 0;
+  font: 500 0.8125rem/1.2 var(--f-text);
+  color: var(--ink-2);
+  white-space: nowrap;
+  transition: color 0.25s;
+}
+.label[data-on] .labelText {
+  color: var(--ink);
+  font-weight: 600;
+}
+.label[data-side="left"] .labelText {
+  transform: translate(calc(-100% - 13px), -50%);
+}
+.label[data-side="right"] .labelText {
+  transform: translate(13px, -50%);
+}
+.label[data-side="below"] .labelText {
+  transform: translate(-50%, 0);
+}
+.label[data-kind="core"] .labelText {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--gold-ink);
+}
+
+.pause {
+  position: absolute;
+  right: 4px;
+  bottom: 4px;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 1px solid var(--rule);
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.9);
+  color: var(--ink-2);
+  transition:
+    color 0.2s,
+    border-color 0.2s;
+}
+.pause:hover {
+  color: var(--ink);
+  border-color: var(--rule-2);
+}
+
+/* ——— билет текущего запроса ——— */
+.ticket {
+  position: relative;
+  min-height: 96px;
+  margin-top: 6px;
+  padding: 16px 22px;
+  border-radius: 18px;
+  background: var(--paper);
+  border: 1px solid var(--rule);
+  box-shadow:
+    0 1px 0 rgba(18, 18, 18, 0.03),
+    0 22px 44px -26px rgba(18, 18, 18, 0.32);
+}
+.ticketIn {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  grid-template-areas:
+    "who req"
+    ". verdict";
+  align-items: baseline;
+  gap: 8px 16px;
+  animation: ticket 0.45s var(--ease-out) both;
+}
+@keyframes ticket {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+.who {
+  grid-area: who;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: var(--ink);
+}
+.req {
+  grid-area: req;
+  font-size: clamp(1rem, 0.92rem + 0.3vw, 1.1875rem);
+  line-height: 1.5;
+  color: var(--ink);
+}
+
+/* плашка с персданными: спереди — как написал человек, сзади — метка */
+.plate {
+  display: inline-grid;
+  vertical-align: baseline;
+  perspective: 600px;
+  transform-style: preserve-3d;
+  transition: transform 0.7s var(--ease-in-out);
+}
+.plate[data-flip] {
+  transform: rotateX(180deg);
+}
+.face {
+  grid-area: 1 / 1;
+  padding: 0 6px;
+  border-radius: 6px;
+  background: #f9d9d5;
+  box-shadow: inset 0 -2px 0 var(--red);
+  backface-visibility: hidden;
+  text-align: center;
+  white-space: nowrap;
+}
+.back {
+  transform: rotateX(180deg);
+  background: var(--gold);
+  box-shadow: inset 0 -2px 0 rgba(0, 0, 0, 0.12);
+  font-size: 0.82em;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+/* Обе стороны лежат в одной ячейке, и ширина плашки — по более широкой,
+   стороне с данными. Пока плашка разворачивается (около ребра), сторона
+   с данными сжимается — и золотая метка остаётся ровно по своему тексту. */
+.face:not(.back) {
+  max-width: 11em;
+  overflow: hidden;
+}
+.plate[data-flip] .face:not(.back) {
+  animation: squeeze 0.34s var(--ease-in-out) 0.2s forwards;
+}
+@keyframes squeeze {
+  to {
+    max-width: 0;
+    padding-inline: 0;
+  }
+}
+
+.verdict {
+  grid-area: verdict;
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 10px;
+  justify-self: start;
+  font-size: 0.9375rem;
+  opacity: 0;
+  transform: translateY(4px);
+  transition:
+    opacity 0.35s var(--ease-out),
+    transform 0.35s var(--ease-out);
+}
+.verdict[data-on] {
+  opacity: 1;
+  transform: none;
+}
+.verdict b {
+  padding: 4px 11px;
+  border-radius: 999px;
+  font-weight: 700;
+}
+.verdict span {
+  color: var(--ink-2);
+}
+.verdict[data-tone="gold"] b {
+  background: var(--gold);
+  color: var(--on-gold);
+}
+.verdict[data-tone="blue"] b {
+  background: var(--blue);
+  color: #ffffff;
+}
+.verdict[data-tone="red"] b {
+  background: var(--red);
+  color: #ffffff;
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+}
+
+@media (max-width: 1100px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+  .copy {
+    max-width: 720px;
+  }
+  .stage {
+    max-height: none;
+  }
+}
+@media (max-width: 560px) {
+  .labelText {
+    font-size: 0.75rem;
+  }
+  .ticket {
+    padding: 14px 16px;
+  }
+  .ticketIn {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "who"
+      "req"
+      "verdict";
+    gap: 6px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .copy,
+  .figure,
+  .ticketIn {
+    animation: none;
+  }
+  .plate[data-flip] .face:not(.back) {
+    animation: none;
+    max-width: 0;
+    padding-inline: 0;
+  }
+}

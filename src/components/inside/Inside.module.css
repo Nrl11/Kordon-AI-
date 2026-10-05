@@ -1,0 +1,730 @@
+/* «Внутри ядра» — тёмный блок: единственное место, где страница уходит
+   в темноту, как будто мы заглянули внутрь Кордона */
+.section {
+  padding-block: clamp(56px, 9vh, 112px);
+  background: var(--ink);
+  color: var(--on-ink);
+  overflow: hidden;
+}
+.title {
+  color: #ffffff;
+}
+
+.stage {
+  border-radius: 28px;
+  background: #111c33;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+}
+.top {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px 24px;
+  padding: 18px clamp(20px, 2.6vw, 34px);
+  border-bottom: 1px solid var(--on-ink-rule);
+}
+
+/* шаги — настоящая последовательность, поэтому с номерами */
+.steps {
+  display: flex;
+  flex-wrap: wrap;
+  /* пункты не тянутся по высоте строки — подчёркивание сразу под словом */
+  align-items: flex-start;
+  align-content: flex-start;
+  gap: 6px 22px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.steps li {
+  position: relative;
+  display: inline-flex;
+  align-items: baseline;
+  gap: 8px;
+  padding-bottom: 8px;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.35);
+  transition: color 0.3s;
+}
+.steps li::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--gold);
+  transform-origin: left;
+  transform: scaleX(0);
+  transition: transform 0.45s var(--ease-out);
+}
+.steps li[data-done] {
+  color: rgba(255, 255, 255, 0.6);
+}
+.steps li[data-on] {
+  color: #ffffff;
+}
+.steps li[data-on]::after {
+  transform: scaleX(1);
+}
+.num {
+  font: 600 0.75rem/1 var(--f-text);
+  font-variant-numeric: tabular-nums;
+  color: rgba(255, 255, 255, 0.35);
+}
+.steps li[data-on] .num {
+  color: var(--gold);
+}
+
+.tabs {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.tab {
+  min-height: 36px;
+  padding: 0 14px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 999px;
+  background: transparent;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--on-ink-2);
+  transition:
+    background-color 0.2s,
+    color 0.2s,
+    border-color 0.2s;
+}
+.tab:hover {
+  color: #ffffff;
+}
+.tab[aria-selected="true"] {
+  border-color: #ffffff;
+  background: #ffffff;
+  color: var(--ink);
+}
+.pause {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  margin-left: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 50%;
+  background: transparent;
+  color: var(--on-ink-2);
+}
+.pause:hover {
+  color: #ffffff;
+}
+
+/* ——— раскладка сцены: схема и решения в ряд, запрос — под ними ——— */
+.layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(340px, 0.46fr);
+  grid-template-areas:
+    "route panel"
+    "text text";
+  column-gap: clamp(18px, 2vw, 32px);
+}
+
+/* ——— маршрут: SVG в пикселях полосы ——— */
+.routeWrap {
+  grid-area: route;
+  min-width: 0;
+  padding: clamp(14px, 2.2vh, 24px) 0 clamp(14px, 2.2vh, 24px) clamp(16px, 3vw, 44px);
+}
+.route {
+  position: relative;
+}
+.routeSvg {
+  display: block;
+  overflow: visible;
+  font-family: var(--f-text);
+}
+/* зона компании — с синим отливом и сплошной кромкой: это периметр */
+.zoneIn {
+  fill: rgba(124, 147, 242, 0.07);
+  stroke: rgba(124, 147, 242, 0.28);
+  stroke-width: 1;
+}
+.zoneOut {
+  fill: rgba(255, 255, 255, 0.025);
+  stroke: rgba(255, 255, 255, 0.14);
+  stroke-width: 1;
+  stroke-dasharray: 4 5;
+}
+.zoneLabel {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  fill: rgba(255, 255, 255, 0.45);
+}
+.base,
+.hl {
+  fill: none;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.base {
+  stroke: rgba(255, 255, 255, 0.13);
+}
+.hl {
+  visibility: hidden; /* до первой расстановки штриха — иначе мигнёт целиком */
+  stroke-width: 2.5;
+}
+.hl[data-l="in"] {
+  stroke: rgba(255, 255, 255, 0.75);
+}
+.hl[data-l="ext"] {
+  stroke: var(--gold);
+}
+.hl[data-l="local"] {
+  stroke: var(--blue-light);
+}
+
+.node circle,
+.node rect {
+  fill: #111c33;
+  stroke-width: 2;
+  transition:
+    fill 0.3s,
+    stroke 0.3s;
+}
+.node text {
+  font-size: 13px;
+  font-weight: 600;
+  fill: var(--on-ink-2);
+  transition: fill 0.3s;
+}
+.node[data-on] text {
+  fill: #ffffff;
+}
+.node[data-n="who"] circle {
+  stroke: rgba(255, 255, 255, 0.45);
+}
+.node[data-n="who"][data-on] circle {
+  fill: #ffffff;
+  stroke: #ffffff;
+}
+.node[data-n="model"] rect {
+  stroke: rgba(224, 176, 74, 0.55);
+}
+.node[data-n="local"] rect {
+  stroke: rgba(124, 147, 242, 0.75);
+}
+.spark {
+  fill: rgba(255, 255, 255, 0.45);
+  transition: fill 0.3s;
+}
+.node[data-n="model"][data-on] rect {
+  fill: var(--gold);
+  stroke: var(--gold);
+}
+.node[data-n="local"][data-on] rect {
+  fill: var(--blue-light);
+  stroke: var(--blue-light);
+}
+.node[data-on] .spark {
+  fill: var(--ink);
+}
+
+/* Кордон — знак «Периметр»: контур, проход наружу, золотое ядро */
+.coreBg {
+  fill: #111c33;
+}
+.coreContour {
+  fill: none;
+  stroke: #ffffff;
+  stroke-width: 4;
+  stroke-linecap: round;
+}
+.coreChannel {
+  stroke: var(--gold);
+  stroke-width: 4;
+  stroke-linecap: round;
+}
+.coreDot {
+  fill: var(--gold);
+  transform-box: fill-box;
+  transform-origin: center;
+  transition: transform 0.4s var(--ease-spring);
+}
+.core[data-on] .coreDot {
+  transform: scale(1.25);
+}
+.core text {
+  font-size: 13px;
+  font-weight: 700;
+  fill: var(--gold);
+}
+/* пока Кордон разбирает запрос — вокруг крутится пунктир проверки */
+.busy {
+  fill: none;
+  stroke: var(--gold);
+  stroke-width: 1.5;
+  stroke-dasharray: 3 7;
+  opacity: 0;
+  transform-box: fill-box;
+  transform-origin: center;
+  transition: opacity 0.3s;
+}
+.core[data-busy] .busy {
+  opacity: 0.9;
+  animation: spin 4s linear infinite;
+}
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* проверка сразу за границей: маскирование — можно, закрытое — нельзя */
+.check {
+  opacity: 0;
+  transition: opacity 0.35s var(--ease-out);
+}
+.check[data-on] {
+  opacity: 1;
+}
+.check circle {
+  fill: var(--gold);
+}
+.check path {
+  fill: none;
+  stroke: var(--ink);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.check text {
+  font-size: 12px;
+  font-weight: 700;
+  fill: var(--gold);
+}
+.check[data-closed] circle {
+  fill: var(--red);
+}
+.check[data-closed] path {
+  stroke: #ffffff;
+}
+.check[data-closed] text {
+  fill: #ff9a90;
+}
+
+/* точка запроса: цвет — что в нём сейчас */
+.dot {
+  fill: #ffffff;
+  stroke: #111c33;
+  stroke-width: 4;
+  paint-order: stroke;
+  transition: fill 0.35s;
+}
+.dot[data-c="pii"] {
+  fill: var(--red);
+}
+.dot[data-c="mask"] {
+  fill: var(--gold);
+}
+.dot[data-c="closed"] {
+  fill: var(--blue-light);
+}
+.pulse {
+  fill: none;
+  stroke: var(--gold);
+  stroke-width: 2;
+  opacity: 0;
+}
+.pulse[data-c="blue"] {
+  stroke: var(--blue-light);
+}
+.pulse[data-c="white"] {
+  stroke: #ffffff;
+}
+
+.text {
+  grid-area: text;
+  display: grid;
+  align-content: start;
+  gap: 12px;
+  min-width: 0;
+  padding: clamp(14px, 2.4vh, 28px) clamp(20px, 3vw, 44px) clamp(18px, 3vh, 34px);
+  border-top: 1px solid var(--on-ink-rule);
+}
+
+/* ——— плитки слов ———
+   положение плиток ведёт GSAP (сдвиг из старого центра в новый), поэтому
+   у них нет CSS-переходов по transform, opacity и padding — иначе два
+   движения спорят и дёргаются. Внутри плитки текст не переносится. */
+.sentenceWrap {
+  position: relative;
+  min-height: clamp(120px, 16vh, 150px);
+}
+.sentence {
+  --px: 12px;
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  column-gap: 0.26em;
+  row-gap: 0.2em;
+  padding-top: 26px;
+  font-family: var(--f-display);
+  font-weight: 600;
+  font-size: clamp(1.45rem, min(0.9rem + 1.5vw, 0.6rem + 3.4vh), 2.3rem);
+  line-height: 1.2;
+  letter-spacing: -0.025em;
+  color: #ffffff;
+}
+.answer {
+  display: none;
+}
+.sentence[data-spread] {
+  column-gap: 12px;
+  row-gap: 30px;
+}
+.tile {
+  position: relative;
+  display: inline-block;
+  border-radius: 10px;
+  white-space: nowrap;
+  transition:
+    background-color 0.35s,
+    color 0.35s,
+    translate 0.4s var(--ease-spring);
+}
+.pair {
+  display: inline-flex;
+  align-items: baseline;
+  column-gap: inherit;
+}
+.tile[data-glue] {
+  margin-left: -0.26em;
+}
+.sentence[data-spread] .tile {
+  padding: 2px var(--px);
+  background: rgba(255, 255, 255, 0.07);
+  /* подложка проявляется, когда плитки уже разъехались, — не наслаиваются */
+  transition:
+    background-color 0.4s 0.5s,
+    color 0.35s,
+    translate 0.4s var(--ease-spring);
+}
+.sentence[data-spread] .tile[data-glue] {
+  margin-left: 0;
+}
+.tile[data-dim] {
+  color: rgba(255, 255, 255, 0.36);
+}
+/* найдено: персданные и секреты — красным, закрытое — синим */
+.tile[data-hit] {
+  color: #ffffff;
+  background: var(--red) !important;
+  translate: 0 -6px;
+}
+.tile[data-hit][data-kind="closed"] {
+  background: var(--blue) !important;
+}
+/* метка перевернулась — красное под ней гаснет, остаётся только золото */
+.sentence:not(.answer) .tile[data-hit][data-flipped]:not([data-swapped]) {
+  background-color: transparent !important;
+}
+.tag {
+  position: absolute;
+  left: 0;
+  bottom: calc(100% + 8px);
+  padding: 2px 8px;
+  border-radius: 6px;
+  background: rgba(217, 58, 47, 0.18);
+  font: 700 0.6875rem/1.4 var(--f-text);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: #ff9a90;
+  opacity: 0;
+  translate: 0 6px;
+  transition:
+    opacity 0.3s,
+    translate 0.3s var(--ease-out);
+  pointer-events: none;
+}
+.tile[data-kind="closed"] .tag {
+  background: rgba(124, 147, 242, 0.2);
+  color: #b4c3ff;
+}
+.tile[data-hit] .tag {
+  opacity: 1;
+  translate: none;
+}
+.tile[data-flipped] .tag,
+.tile[data-swapped] .tag {
+  opacity: 0;
+}
+
+/* переворот: спереди — как написано, сзади — метка (или наоборот в ответе);
+   стороны по центру — метка не растягивается на ширину данных */
+.flip {
+  display: inline-grid;
+  justify-items: center;
+  transform-style: preserve-3d;
+}
+.face {
+  grid-area: 1 / 1;
+  backface-visibility: hidden;
+  white-space: nowrap;
+}
+.back {
+  transform: rotateX(180deg);
+}
+.sentence:not(.answer) .tile[data-hit] .back {
+  margin: -2px calc(var(--px) * -1);
+  padding: 2px var(--px);
+  border-radius: 10px;
+  background: var(--gold);
+  color: var(--ink);
+  font-size: 0.78em;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  align-self: center;
+}
+/* после переворота остаётся только видимая сторона — и строка собирается */
+.tile[data-swapped] .flip {
+  transform: none !important;
+}
+.tile[data-swapped] .face:not(.back) {
+  display: none;
+}
+.tile[data-swapped] .back {
+  transform: none;
+}
+.sentence:not(.answer) .tile[data-swapped] {
+  translate: none;
+  background: var(--gold) !important;
+  color: var(--ink);
+  padding: 2px var(--px);
+  align-self: center;
+}
+.sentence:not(.answer) .tile[data-swapped] .back {
+  margin: 0;
+  padding: 0;
+  background: none;
+}
+
+/* в ответе: спереди метка, после переворота — данные на месте */
+.answer .tile[data-kind] {
+  padding: 2px 12px;
+  background: var(--gold);
+  color: var(--ink);
+  font-size: 0.78em;
+  font-weight: 700;
+  text-align: center;
+  align-self: center;
+}
+.answer .tile[data-kind] .flip {
+  position: relative;
+}
+/* до переворота плитка по ширине метки; данные шире — плитка раздвинется заранее */
+.answer .tile[data-kind]:not([data-swapped]) .back {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  translate: -50% -50%;
+  font-size: 1.28em;
+  font-weight: 600;
+  color: #ffffff;
+}
+.answer .tile[data-swapped] {
+  font-size: 1em;
+  font-weight: 600;
+  background: rgba(255, 255, 255, 0.12);
+  color: #ffffff;
+  box-shadow: inset 0 -2px 0 rgba(255, 255, 255, 0.4);
+}
+.answer .tile[data-swapped] .back {
+  font-size: 1em;
+}
+
+/* сканер */
+.scan {
+  position: absolute;
+  top: 10px;
+  bottom: -10px;
+  left: 0;
+  width: 2px;
+  margin-left: -1px;
+  border-radius: 2px;
+  background: var(--gold);
+  opacity: 0;
+  pointer-events: none;
+}
+.scan::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 2px;
+  width: 70px;
+  background: linear-gradient(90deg, transparent, rgba(224, 176, 74, 0.16));
+}
+
+.caption {
+  min-height: 1.5em;
+  max-width: 72ch;
+  font-size: 0.9375rem;
+  line-height: 1.5;
+  color: var(--on-ink-2);
+}
+
+/* ——— решения шлюза: рядом со схемой, по строке на решение ——— */
+.panel {
+  grid-area: panel;
+  align-self: center;
+  margin: clamp(14px, 2.2vh, 24px) clamp(16px, 3vw, 44px) clamp(14px, 2.2vh, 24px) 0;
+  padding: 18px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.04);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+}
+.panelTitle {
+  margin-bottom: 12px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--on-ink-2);
+}
+/* решения сеткой 2×2: подпись над значением — панель не выше схемы рядом */
+.panel ul {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.panel li {
+  display: grid;
+  align-content: start;
+  gap: 2px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.03);
+  opacity: 0.28;
+  transform: translateX(10px);
+  transition:
+    opacity 0.45s var(--ease-out),
+    transform 0.45s var(--ease-out),
+    background-color 0.45s;
+}
+.panel li[data-on] {
+  opacity: 1;
+  transform: none;
+  background: rgba(255, 255, 255, 0.06);
+}
+.panel li span {
+  font-size: 0.75rem;
+  color: var(--on-ink-2);
+}
+.panel li {
+  min-width: 0;
+}
+/* значение с точкой-маркером слева; длинное переносится внутри ячейки */
+.panel li b {
+  position: relative;
+  display: block;
+  padding-left: 16px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  line-height: 1.35;
+  overflow-wrap: break-word;
+}
+.panel li b::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.45em;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.25);
+}
+.panel li[data-on][data-tone="gold"] b::before {
+  background: var(--gold);
+}
+.panel li[data-on][data-tone="blue"] b::before {
+  background: var(--blue-light);
+}
+.panel li[data-on][data-tone="green"] b::before {
+  background: #4ad295;
+}
+
+@media (max-width: 980px) {
+  /* узко: схема, под ней запрос, решения — последними */
+  .layout {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      "route"
+      "text"
+      "panel";
+  }
+  .routeWrap {
+    padding-right: clamp(16px, 3vw, 44px);
+  }
+  .panel {
+    margin: 0 clamp(16px, 3vw, 44px) clamp(18px, 3vh, 30px);
+  }
+}
+@media (max-width: 640px) {
+  .top {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .steps {
+    gap: 6px 14px;
+  }
+  .steps li {
+    font-size: 0.8125rem;
+  }
+  .sentence {
+    --px: 8px;
+  }
+  .sentence[data-spread] {
+    column-gap: 8px;
+    row-gap: 30px;
+  }
+  .sentenceWrap {
+    min-height: 200px;
+  }
+  .node text,
+  .core text {
+    font-size: 12px;
+  }
+}
+@media (max-width: 480px) {
+  /* пять шагов в одну строку: номера прячем, порядок и так читается */
+  .steps {
+    gap: 6px 12px;
+  }
+  .num {
+    display: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .tile,
+  .tag,
+  .panel li,
+  .steps li::after,
+  .check,
+  .node circle,
+  .node rect {
+    transition: none;
+  }
+  .core[data-busy] .busy {
+    animation: none;
+  }
+}

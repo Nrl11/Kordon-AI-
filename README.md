@@ -1,36 +1,65 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Кордон AI — сайт
 
-## Getting Started
+Лендинг корпоративного ИИ-шлюза «Кордон AI»: шлюз ставится в контур компании, маскирует персданные и ключи,
+выбирает модель (внешнюю или локальную), ведёт лимиты, отзывает доступ и пишет журнал в SIEM.
+Аудитория — CTO, CISO, DevOps.
 
-First, run the development server:
+## Стек
+
+- Next.js 16 (App Router, Turbopack), React 19 с React Compiler, TypeScript
+- CSS Modules, токены — в `src/app/globals.css`, шрифты — в `src/app/fonts.ts`
+- GSAP — анимации блоков, Lenis — плавная прокрутка
+- three.js — только объёмная сцена первого экрана
+
+## Запуск
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Сайт откроется на http://localhost:3000.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+npm run build   # продакшен-сборка
+npm start       # запуск собранного сайта
+npm run lint    # ESLint (правила Next и React Compiler)
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Оформление
 
-## Learn More
+- Палитра: чернильный `#0b1324`, кобальт `#2a47d6` (кнопки, активные элементы, запросы внутри контура),
+  золото `#e0b04a` — только ядро Кордона, метки маскирования и экономия; красный — утечки и «стоп»,
+  зелёный — «разрешено».
+- Шрифты: Wix Madefor Display (заголовки, крупные числа) и Wix Madefor Text (текст и интерфейс; у цифр в данных —
+  `font-variant-numeric: tabular-nums`). Моноширинного шрифта нет.
+- У блоков только заголовок, без подписи сбоку: смысл передаёт сам блок.
+- Каждый блок (заголовок и сцена) целиком помещается в окно: 24″ при 100 % (~1920×920) и ноутбук (~1440×800).
+  Отступы и размеры привязаны к высоте окна (`vh`), заголовки — в одну строку, пока хватает ширины.
 
-To learn more about Next.js, take a look at the following resources:
+## Блоки страницы
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+| Блок | Файлы | Что показывает |
+| --- | --- | --- |
+| Первый экран | `components/hero`, `components/three` | знак «Периметр» в объёме: отделы внутри контура, ядро Кордона, модели за проходом. По линиям идёт поток запросов (у всех одна скорость, ядро проходят по расписанию — не слипаются); один запрос выделен карточкой, под схемой — его текст и решение шлюза |
+| Проблема | `components/problem` | слева — запрос сотрудника с красным маркером по персданным; справа — зона «Вне компании», куда вылетают и копятся утёкшие фрагменты, рядом «Журнал ИБ: 0 записей»; три цифры с источниками |
+| Что Кордон делает с запросом | `components/inside` | маршрут (SVG): сотрудник → Кордон на границе компании → внешние модели или локальная модель; ниже запрос раскладывается на плитки, сканер находит данные, маскирование меняет их на метки, ответ возвращает данные на место. Три примера: юрист, разработчик, финансы |
+| Правила задаёте вы | `components/rules` | консоль политик: выключите правило — журнал сразу покажет, что уйдёт наружу |
+| Сколько вы переплачиваете | `components/economics` | ползунки, счёт за ИИ двумя полосами («Сейчас» и «С Кордоном»): из подписок и запросов к API вырезана экономия; итог за год. Расчёт — `calc.ts` |
+| Тарифы | `components/pricing` | лицензия по числу потребителей: ступени с запасом 10 %, модули, запрос цены переносится в заявку |
+| Начните с пилота | `components/path`, `components/pilot`, `app/api/pilot` | три шага (пилот → отчёты → лицензия), пропуск на пилот заполняется из формы (компания и сколько сотрудников пользуются ИИ), заявка с проверкой полей |
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Анимации идут, только когда блок на экране; у зацикленных есть кнопка паузы. При системной настройке
+«уменьшить движение» показываются итоговые кадры без движения.
 
-## Deploy on Vercel
+## Что нужно решить до публикации
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- **Куда уходит заявка.** `src/app/api/pilot/route.ts` проверяет данные и пишет в лог только номер заявки,
+  размер компании и выбранную лицензию — доставку (почта, Telegram или CRM) нужно подключить.
+- **Политика обработки ПДн.** `src/app/privacy/page.tsx` — заглушка, нужен текст от юристов.
+- **Цена пилота.** В блоке «Начните с пилота» указано «Пилот · 500 000 ₽» (`components/path/Path.tsx`) — подтвердить.
+- **Примеры.** Запросы сотрудников, модели на первом экране, события журнала и решения шлюза — иллюстрации.
+  Сверить названия моделей с реально подключёнными.
+- **Требования.** В консоли правил упомянуты 152-ФЗ и приказ ФСТЭК № 117 — согласовать формулировки с юристами.
+- **Цифры.** Статистика в блоке проблемы — со ссылками на источники; экономика — пример с допущениями, которые
+  меняет посетитель (`components/economics/calc.ts`).
