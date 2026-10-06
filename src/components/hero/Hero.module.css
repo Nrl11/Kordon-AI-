@@ -76,6 +76,19 @@
 .stage[data-ready] .canvas {
   opacity: 1;
 }
+/* ролик при старте — на месте схемы */
+.videoStage {
+  overflow: hidden;
+  border-radius: 28px;
+  background: var(--paper-2);
+}
+.video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
 .fallback {
   position: absolute;
   inset: 0;
@@ -151,12 +164,26 @@
 .label[data-side="below"] .labelText {
   transform: translate(-50%, 0);
 }
+.label[data-side="above"] .labelText {
+  transform: translate(-50%, calc(-100% - 4px));
+}
 .label[data-kind="core"] .labelText {
   font-size: 0.75rem;
   font-weight: 700;
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--gold-ink);
+}
+/* подписи зон: где ваша компания, а где уже снаружи */
+.label[data-kind="zone"] .labelText {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+.label[data-kind="zone"][data-side="above"] .labelText {
+  transform: translate(-50%, calc(-100% - 2px));
 }
 
 .pause {

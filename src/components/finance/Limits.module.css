@@ -1,0 +1,127 @@
+.card {
+  display: grid;
+  gap: 14px;
+  padding: clamp(18px, 2vw, 28px);
+  border-radius: 28px;
+  background: var(--ink);
+  color: #ffffff;
+}
+.top {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+}
+.label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--on-ink-2);
+}
+.day {
+  font-size: 0.9375rem;
+  color: var(--on-ink-2);
+}
+.day b {
+  display: inline-block;
+  min-width: 2ch;
+  font-family: var(--f-display);
+  font-size: 1.6rem;
+  font-weight: 800;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  color: #ffffff;
+}
+.month {
+  height: 4px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.1);
+  overflow: hidden;
+}
+.month i {
+  display: block;
+  height: 100%;
+  width: 100%;
+  background: rgba(255, 255, 255, 0.6);
+  transform-origin: left;
+  transform: scaleX(var(--p));
+}
+
+.teams {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.teams li {
+  display: grid;
+  gap: 6px;
+  padding: 12px 14px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.05);
+  transition: background-color 0.3s;
+}
+.teams li[data-state="stop"] {
+  background: rgba(255, 107, 94, 0.14);
+}
+.row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+}
+.row b {
+  font-weight: 700;
+}
+.sum {
+  font-size: 0.875rem;
+  color: var(--on-ink-2);
+  font-variant-numeric: tabular-nums;
+}
+.bar {
+  position: relative;
+  height: 12px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+}
+.bar i {
+  position: absolute;
+  inset: 0;
+  border-radius: 999px;
+  background: #4ad295;
+  transform-origin: left;
+  transform: scaleX(var(--u));
+}
+li[data-state="warn"] .bar i {
+  background: var(--gold);
+}
+li[data-state="stop"] .bar i {
+  background: #ff6b5e;
+}
+/* отметка 80 % */
+.mark {
+  position: absolute;
+  left: 80%;
+  top: -3px;
+  bottom: -3px;
+  width: 2px;
+  background: rgba(255, 255, 255, 0.5);
+}
+.note {
+  min-height: 1.4em;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+li[data-state="warn"] .note {
+  color: var(--gold-2);
+}
+li[data-state="stop"] .note {
+  color: #ff8a80;
+}
+.show {
+  opacity: 1;
+}

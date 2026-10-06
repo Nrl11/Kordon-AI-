@@ -1,0 +1,87 @@
+/* ——— переключатель ролей ——— */
+.roles {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  padding: 4px;
+  border-radius: 999px;
+  background: var(--paper-2);
+}
+.roles a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 40px;
+  padding: 0 16px;
+  border-radius: 999px;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--ink-2);
+  text-decoration: none;
+  transition:
+    background-color 0.2s,
+    color 0.2s;
+}
+.roles a:hover {
+  color: var(--ink);
+}
+.roles a[aria-current="page"] {
+  background: var(--ink);
+  color: #ffffff;
+}
+
+/* ——— последний блок: что дальше ——— */
+.ctaBand {
+  padding: clamp(40px, 7vh, 88px) 0;
+}
+.ctaCard {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: clamp(20px, 3vw, 44px);
+  padding: clamp(28px, 4vw, 52px);
+  border-radius: 32px;
+  background: var(--ink);
+  color: var(--on-ink);
+  overflow: hidden;
+}
+/* золотой след от ядра — как в знаке */
+.ctaCard::after {
+  content: "";
+  position: absolute;
+  right: -10%;
+  top: -60%;
+  width: 60%;
+  height: 220%;
+  background: radial-gradient(closest-side, rgba(224, 176, 74, 0.16), transparent);
+  pointer-events: none;
+}
+.ctaMark {
+  position: relative;
+  z-index: 1;
+}
+.ctaTitle {
+  font-family: var(--f-display);
+  font-weight: 700;
+  font-size: clamp(1.6rem, 1rem + 1.8vw, 2.6rem);
+  line-height: 1.05;
+  letter-spacing: -0.035em;
+  color: #ffffff;
+  text-wrap: balance;
+}
+.ctaText {
+  max-width: 54ch;
+  margin-top: 10px;
+  color: var(--on-ink-2);
+}
+.ctaCard :global(.btn) {
+  position: relative;
+  z-index: 1;
+}
+
+@media (max-width: 860px) {
+  .ctaCard {
+    grid-template-columns: minmax(0, 1fr);
+    justify-items: start;
+  }
+}

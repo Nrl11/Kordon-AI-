@@ -1,0 +1,143 @@
+/* доска: слева классы, справа три зоны — всё дальше от компании */
+.board {
+  --name: minmax(200px, 0.9fr);
+  display: grid;
+  gap: 10px;
+}
+.head,
+.rows li {
+  display: grid;
+  grid-template-columns: var(--name) minmax(0, 2.4fr);
+  align-items: center;
+  gap: clamp(14px, 2vw, 28px);
+}
+.head {
+  padding-bottom: 10px;
+  border-bottom: 2px solid var(--ink);
+}
+.zones {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+.zone {
+  display: grid;
+  gap: 2px;
+  padding-left: 14px;
+  border-left: 1px dashed var(--rule-2);
+}
+.zone b {
+  font-family: var(--f-display);
+  font-weight: 700;
+  font-size: 1.05rem;
+}
+.zone small {
+  font-size: 0.8125rem;
+  color: var(--ink-3);
+}
+.zone:first-child b {
+  color: var(--blue-ink);
+}
+
+.rows {
+  display: grid;
+  gap: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.rows li {
+  padding: clamp(12px, 2vh, 18px) 0;
+  border-bottom: 1px solid var(--rule-2);
+}
+.name {
+  display: grid;
+  gap: 2px;
+}
+.name b {
+  font-family: var(--f-display);
+  font-size: clamp(1.1rem, 1rem + 0.4vw, 1.35rem);
+  font-weight: 700;
+  letter-spacing: -0.015em;
+}
+.name small {
+  font-size: 0.875rem;
+  color: var(--ink-3);
+}
+
+/* полоса тянется до самой дальней разрешённой зоны */
+.lane {
+  position: relative;
+  height: 46px;
+  background:
+    linear-gradient(90deg, var(--blue-soft) 0 33.33%, transparent 33.33%),
+    repeating-linear-gradient(90deg, transparent 0 calc(33.33% - 1px), var(--rule-2) calc(33.33% - 1px) 33.33%);
+  border-radius: 10px;
+}
+.bar {
+  position: absolute;
+  left: 0;
+  top: 6px;
+  bottom: 6px;
+  width: calc(var(--reach) * 33.33% - 8px);
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 0 14px;
+  border-radius: 8px;
+  background: var(--ink);
+  transform-origin: left;
+}
+.lane[data-reach="1"] .bar {
+  background: var(--blue);
+}
+.lane[data-reach="3"] .bar {
+  background: linear-gradient(90deg, var(--ink), #24324f);
+}
+.bar em {
+  font-style: normal;
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: #ffffff;
+  white-space: nowrap;
+}
+.lane[data-reach="3"] .bar em {
+  color: var(--gold-2);
+}
+
+.note {
+  margin-top: 6px;
+  color: var(--ink-2);
+}
+
+@media (scripting: enabled) and (prefers-reduced-motion: no-preference) {
+  .bar {
+    transform: scaleX(0.05);
+    transition: transform 0.9s var(--ease-out);
+    transition-delay: calc(0.2s + var(--i) * 0.15s);
+  }
+  .bar em {
+    opacity: 0;
+    transition: opacity 0.4s;
+    transition-delay: calc(0.9s + var(--i) * 0.15s);
+  }
+  [data-in] .bar {
+    transform: none;
+  }
+  [data-in] .bar em {
+    opacity: 1;
+  }
+}
+
+@media (max-width: 760px) {
+  .head {
+    display: none;
+  }
+  .head,
+  .rows li {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 8px;
+  }
+  .bar em {
+    font-size: 0.75rem;
+  }
+}

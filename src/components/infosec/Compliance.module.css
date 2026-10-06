@@ -1,0 +1,78 @@
+.wrap {
+  display: grid;
+  gap: 18px;
+}
+.cards {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(14px, 1.6vw, 24px);
+}
+/* карточка требования: документ, о чём, чем закрыто, чем подтверждается */
+.card {
+  display: grid;
+  grid-template-rows: auto auto 1fr auto;
+  gap: 10px;
+  padding: clamp(20px, 2.4vw, 28px);
+  border-radius: 22px;
+  background: var(--paper-2);
+  box-shadow: inset 0 0 0 1px var(--rule);
+}
+.doc {
+  font-family: var(--f-display);
+  font-size: clamp(1.3rem, 1.1rem + 0.6vw, 1.7rem);
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+  text-wrap: balance;
+}
+.about {
+  color: var(--ink-2);
+}
+.how {
+  padding-top: 12px;
+  border-top: 1.5px dashed var(--rule-2);
+  font-weight: 600;
+  text-wrap: pretty;
+}
+/* подтверждение — как строка журнала на ленте */
+.proof {
+  display: grid;
+  gap: 4px;
+  margin-top: 6px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: var(--ink);
+  color: #ffffff;
+}
+.proof span {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--on-ink-2);
+}
+.proof b {
+  font-size: 0.9375rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.proof time {
+  margin-right: 6px;
+  color: var(--on-ink-2);
+  font-weight: 500;
+}
+.proof[data-t="mask"] b {
+  color: var(--gold-2);
+}
+.proof[data-t="local"] b {
+  color: var(--blue-light);
+}
+.note {
+  color: var(--ink-2);
+}
+
+@media (max-width: 900px) {
+  .cards {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

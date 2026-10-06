@@ -1,0 +1,190 @@
+.wrap {
+  display: grid;
+  grid-template-columns: minmax(0, 1.5fr) minmax(0, 0.5fr);
+  gap: 14px;
+}
+.chart {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+  padding: clamp(16px, 2vw, 26px);
+  border-radius: 24px;
+  background: var(--paper);
+  box-shadow:
+    0 0 0 1px var(--rule),
+    0 24px 48px -40px rgba(11, 19, 36, 0.35);
+}
+.chart svg {
+  width: 100%;
+  height: auto;
+  font-family: var(--f-text);
+}
+.paid {
+  fill: var(--blue-soft);
+}
+.check {
+  stroke: var(--rule-2);
+  stroke-width: 1;
+  stroke-dasharray: 3 4;
+}
+.axis {
+  stroke: var(--ink);
+  stroke-width: 1;
+}
+.tick {
+  font-size: 12px;
+  font-weight: 600;
+  fill: var(--ink-3);
+}
+.tier {
+  fill: none;
+  stroke: var(--blue);
+  stroke-width: 2.5;
+  stroke-linejoin: round;
+}
+.users {
+  fill: none;
+  stroke: var(--ink);
+  stroke-width: 2.5;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+.lbl {
+  font-size: 12.5px;
+  font-weight: 700;
+  fill: var(--blue-ink);
+}
+.lblUsers {
+  font-size: 12.5px;
+  font-weight: 700;
+  fill: var(--ink);
+}
+.dot circle {
+  fill: var(--ink);
+  stroke: var(--paper);
+  stroke-width: 3;
+}
+.dot text {
+  font-size: 12px;
+  font-weight: 800;
+  fill: var(--gold-2);
+}
+
+/* прорисовка при появлении */
+@media (scripting: enabled) and (prefers-reduced-motion: no-preference) {
+  .users {
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+    transition: stroke-dashoffset 1.6s var(--ease-in-out) 0.2s;
+  }
+  .in .users {
+    stroke-dashoffset: 0;
+  }
+  .dot {
+    opacity: 0;
+    transition: opacity 0.4s;
+  }
+  .in .dot {
+    opacity: 1;
+  }
+  .in .dot:nth-of-type(1) {
+    transition-delay: 0.9s;
+  }
+  .in .dot:nth-of-type(2) {
+    transition-delay: 1.3s;
+  }
+  .in .dot:nth-of-type(3) {
+    transition-delay: 1.7s;
+  }
+  .notes li {
+    opacity: 0;
+    transform: translateY(8px);
+    transition:
+      opacity 0.5s var(--ease-out),
+      transform 0.5s var(--ease-out);
+  }
+  .in .notes li {
+    opacity: 1;
+    transform: none;
+  }
+  .in .notes li:nth-child(1) {
+    transition-delay: 0.9s;
+  }
+  .in .notes li:nth-child(2) {
+    transition-delay: 1.3s;
+  }
+  .in .notes li:nth-child(3) {
+    transition-delay: 1.7s;
+  }
+}
+
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 20px;
+  font-size: 0.875rem;
+  color: var(--ink-2);
+}
+.legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.legend span::before {
+  content: "";
+  width: 18px;
+  height: 12px;
+  border-radius: 3px;
+}
+.legend span[data-k="tier"]::before {
+  background: var(--blue-soft);
+  box-shadow: inset 0 2px 0 var(--blue);
+}
+.legend span[data-k="buf"]::before {
+  background: repeating-linear-gradient(135deg, var(--gold) 0 2px, var(--gold-soft) 2px 5px);
+}
+.legend span[data-k="users"]::before {
+  height: 3px;
+  background: var(--ink);
+}
+
+.notes {
+  display: grid;
+  align-content: start;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.notes li {
+  display: grid;
+  grid-template-columns: 14px minmax(0, 1fr);
+  gap: 12px;
+  padding: 14px 16px;
+  border-radius: 18px;
+  background: var(--paper);
+  box-shadow: 0 0 0 1px var(--rule);
+}
+/* точка — как отметка на графике */
+.notes li > span {
+  width: 14px;
+  height: 14px;
+  margin-top: 5px;
+  border-radius: 50%;
+  background: var(--ink);
+  box-shadow: 0 0 0 3px var(--gold-soft);
+}
+.notes b {
+  font-family: var(--f-display);
+  font-size: 1.0625rem;
+}
+.notes p {
+  font-size: 0.9375rem;
+  color: var(--ink-2);
+}
+
+@media (max-width: 1000px) {
+  .wrap {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

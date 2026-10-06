@@ -1,0 +1,211 @@
+.wrap {
+  margin: 0;
+}
+.stage {
+  --p: 1;
+  --lw: 150px;
+  position: relative;
+  padding: clamp(18px, 2.6vh, 26px) clamp(18px, 2vw, 28px) clamp(20px, 3vh, 30px);
+  border-radius: 28px;
+  background: #111c33;
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.08),
+    0 50px 90px -60px rgba(11, 19, 36, 0.8);
+  color: #ffffff;
+}
+.head {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: clamp(10px, 1.8vh, 18px);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.lanes {
+  position: relative;
+  display: grid;
+  gap: clamp(4px, 0.8vh, 8px);
+}
+.lane {
+  display: grid;
+  grid-template-columns: var(--lw) minmax(0, 1fr);
+  align-items: center;
+  gap: 14px;
+  min-height: clamp(42px, 6vh, 52px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+}
+.label {
+  display: grid;
+  gap: 1px;
+}
+.label b {
+  font-size: 0.9375rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+.label small {
+  font-size: 0.8125rem;
+  color: var(--on-ink-2);
+  transition: color 0.3s;
+}
+.lane[data-down] .label small {
+  color: #ff8a7f;
+  font-weight: 700;
+}
+.lane[data-up] .label small {
+  color: var(--gold-2);
+  font-weight: 700;
+}
+
+.track {
+  position: relative;
+  height: 40px;
+}
+/* линии видны до курсора «сейчас» */
+.track svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  clip-path: inset(-6px calc((1 - var(--p)) * 100%) -6px 0);
+}
+.line {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.55);
+  stroke-width: 1.6;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+}
+.lane[data-up] .line {
+  stroke: rgba(255, 217, 138, 0.85);
+}
+.gap {
+  fill: none;
+  stroke: #ff6b5e;
+  stroke-width: 2;
+  stroke-dasharray: 5 6;
+  vector-effect: non-scaling-stroke;
+}
+
+/* приложения: толстая золотая линия под чертой */
+.app {
+  margin-top: clamp(6px, 1.2vh, 12px);
+  padding-top: clamp(6px, 1.2vh, 12px);
+  padding-bottom: 22px;
+  border-top: 1.5px solid rgba(224, 176, 74, 0.5);
+  border-bottom: 0;
+}
+.app .label b {
+  color: var(--gold-2);
+}
+.app .line {
+  stroke: var(--gold);
+  stroke-width: 3;
+}
+
+/* подписи событий */
+.flag,
+.switch {
+  position: absolute;
+  left: calc(var(--x) * 100%);
+  padding: 3px 8px;
+  border-radius: 7px;
+  background: #0b1324;
+  font-size: 0.75rem;
+  font-weight: 700;
+  white-space: nowrap;
+  opacity: 0;
+  transition:
+    opacity 0.3s,
+    transform 0.3s var(--ease-out);
+}
+.flag {
+  top: 12px;
+  transform: translate(-6px, 4px);
+  color: #ff8a7f;
+  box-shadow: inset 0 0 0 1px rgba(255, 107, 94, 0.5);
+}
+.switch {
+  top: 38px;
+  transform: translate(-6px, 4px);
+  color: var(--gold-2);
+  box-shadow: inset 0 0 0 1px rgba(224, 176, 74, 0.6);
+}
+.flag[data-on],
+.switch[data-on] {
+  opacity: 1;
+}
+.flag[data-on] {
+  transform: translate(-6px, 0);
+}
+.switch[data-on] {
+  transform: translate(-6px, 0);
+}
+
+/* курсор «сейчас» — над колонкой линий */
+.overlay {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: calc(var(--lw) + 14px);
+  right: 0;
+  pointer-events: none;
+}
+.cursor {
+  position: absolute;
+  top: -4px;
+  bottom: -4px;
+  left: calc(var(--p) * 100%);
+  width: 1.5px;
+  background: rgba(255, 255, 255, 0.35);
+}
+.cursor::after {
+  content: "";
+  position: absolute;
+  bottom: -3px;
+  left: -3px;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--gold);
+}
+
+.caption {
+  min-height: 2.9em;
+  margin-top: 14px;
+  font-size: 0.9375rem;
+  line-height: 1.45;
+  color: var(--ink-2);
+}
+
+@media (max-width: 560px) {
+  .stage {
+    --lw: 124px;
+  }
+  .lane {
+    gap: 10px;
+  }
+  .overlay {
+    left: calc(var(--lw) + 10px);
+  }
+  .label b,
+  .label small {
+    white-space: nowrap;
+  }
+  .label b {
+    font-size: 0.875rem;
+  }
+  .label small {
+    font-size: 0.75rem;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .flag,
+  .switch,
+  .label small {
+    transition: none;
+  }
+}

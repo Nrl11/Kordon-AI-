@@ -1,0 +1,177 @@
+.stage {
+  display: grid;
+  grid-template-columns: minmax(0, 1.5fr) minmax(0, 0.62fr);
+  align-items: stretch;
+  gap: clamp(24px, 3.4vw, 56px);
+}
+
+/* тёмное поле, на нём светлый остров компании */
+.board {
+  display: grid;
+  align-items: center;
+  border-radius: 28px;
+  overflow: hidden;
+  background:
+    radial-gradient(70% 90% at 80% 50%, #1a2645 0%, transparent 70%),
+    #111c33;
+  box-shadow: 0 50px 90px -60px rgba(11, 19, 36, 0.8);
+}
+.board svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  font-family: var(--f-text);
+}
+.island {
+  fill: var(--paper);
+}
+.contour {
+  fill: none;
+  stroke: var(--ink);
+  stroke-width: 6;
+  stroke-linecap: round;
+}
+.zone,
+.zoneDark {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.zone {
+  fill: var(--ink-3);
+}
+.zoneDark {
+  fill: var(--on-ink-2);
+}
+.wire {
+  fill: none;
+  stroke: var(--rule-2);
+  stroke-width: 2;
+}
+.wireOut {
+  fill: none;
+  stroke: var(--gold);
+  stroke-width: 3;
+  stroke-linejoin: round;
+}
+.dot {
+  fill: var(--gold);
+}
+.dotIn {
+  fill: var(--ink);
+}
+
+.box rect {
+  fill: var(--paper-2);
+  stroke: var(--rule-2);
+  stroke-width: 1.5;
+}
+.box text {
+  font-size: 16px;
+  font-weight: 700;
+  fill: var(--ink);
+}
+.box .sub {
+  font-size: 13px;
+  font-weight: 500;
+  fill: var(--ink-3);
+}
+.box[data-k="gate"] rect {
+  fill: var(--paper);
+  stroke: var(--gold);
+  stroke-width: 3;
+}
+.box[data-k="gate"] text:first-of-type {
+  font-family: var(--f-display);
+  font-size: 19px;
+  font-weight: 800;
+}
+.box[data-k="local"] rect {
+  fill: var(--blue-soft);
+  stroke: var(--blue-light);
+}
+.box[data-k="local"] text:first-of-type {
+  fill: var(--blue-ink);
+}
+.box[data-k="entry"] rect {
+  fill: var(--paper);
+  stroke: var(--ink);
+}
+.ext rect {
+  fill: rgba(255, 255, 255, 0.06);
+  stroke: rgba(255, 255, 255, 0.3);
+}
+.ext text {
+  font-size: 15px;
+  font-weight: 700;
+  fill: #ffffff;
+}
+.ext .subDark {
+  font-size: 12.5px;
+  font-weight: 500;
+  fill: var(--on-ink-2);
+}
+.noteDark {
+  font-size: 13px;
+  fill: var(--on-ink-2);
+}
+
+/* три факта: колонка растянута на высоту схемы, строки делят её поровну */
+.facts {
+  display: grid;
+  align-content: space-between;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: 2px solid var(--ink);
+}
+.facts li {
+  display: grid;
+  align-content: center;
+  justify-items: start;
+  gap: 6px;
+  padding: clamp(12px, 2vh, 20px) 0;
+  border-bottom: 1px solid var(--rule-2);
+}
+.facts li:last-child {
+  border-bottom: 0;
+}
+.facts b {
+  font-family: var(--f-display);
+  font-size: clamp(1.15rem, 1rem + 0.45vw, 1.4rem);
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+}
+.facts p {
+  color: var(--ink-2);
+  text-wrap: pretty;
+}
+/* экономия — золотая карточка с кнопкой в калькулятор */
+.facts .save {
+  gap: 10px;
+  margin-top: 6px;
+  padding: clamp(16px, 2.4vh, 22px) 20px;
+  border: 0;
+  border-radius: 20px;
+  background: linear-gradient(160deg, rgba(224, 176, 74, 0.22), rgba(224, 176, 74, 0.08));
+  box-shadow: inset 0 0 0 1.5px rgba(224, 176, 74, 0.7);
+}
+.facts .save b {
+  color: var(--ink);
+}
+.facts .save p {
+  color: var(--ink-2);
+}
+@media (max-width: 1000px) {
+  .stage {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .dot,
+  .dotIn {
+    display: none;
+  }
+}

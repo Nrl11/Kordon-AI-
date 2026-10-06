@@ -1,14 +1,7 @@
 import Link from "next/link";
+import { CTA, FOOTER } from "@/lib/site";
 import { Logo } from "./Logo";
 import styles from "./Footer.module.css";
-
-const LINKS = [
-  { href: "/#how", label: "Как работает" },
-  { href: "/#economics", label: "Экономика" },
-  { href: "/#pricing", label: "Тарифы" },
-  { href: "/#path", label: "Как начать" },
-  { href: "/#pilot", label: "Пилот" },
-];
 
 export default function Footer() {
   return (
@@ -16,20 +9,34 @@ export default function Footer() {
       <div className={`wrap ${styles.inner}`}>
         <div className={styles.brand}>
           <Logo size={34} tone="dark" />
-          <p>Защита, которая окупает себя</p>
+          <p>Один шлюз ко всем нейросетям</p>
+          <Link className="btn btn-primary btn-sm" href={CTA.href}>
+            {CTA.label} <span className="arr" aria-hidden="true">→</span>
+          </Link>
         </div>
-        <nav aria-label="Разделы сайта">
-          <ul className={styles.links}>
-            {LINKS.map((l) => (
-              <li key={l.href}>
-                <a href={l.href}>{l.label}</a>
-              </li>
-            ))}
-          </ul>
+        <nav className={styles.cols} aria-label="Карта сайта">
+          {FOOTER.map((col) => (
+            <div key={col.title}>
+              <p className={styles.colTitle}>{col.title}</p>
+              <ul>
+                {col.links.map((l) => (
+                  <li key={l.href}>
+                    {l.href.startsWith("http") ? (
+                      <a href={l.href} target="_blank" rel="noopener noreferrer">
+                        {l.label}
+                      </a>
+                    ) : (
+                      <Link href={l.href}>{l.label}</Link>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
         </nav>
         <div className={styles.legal}>
           <span>© 2026 Вебпрактик</span>
-          <Link href="/privacy">Политика обработки персональных данных</Link>
+          <span>Кордон AI — корпоративный ИИ-шлюз в вашем контуре</span>
         </div>
       </div>
     </footer>

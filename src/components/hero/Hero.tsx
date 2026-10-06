@@ -1,16 +1,82 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import Link from "next/link";
 import { LogoMark } from "@/components/Logo";
 import { useStage } from "@/components/three/useStage";
 import { cx } from "@/lib/css";
+import { HERO_VIDEO } from "@/lib/media";
+import { nb } from "@/lib/typo";
 import { DEPTS, STORIES, destName, type Phase } from "./flow";
 import { HERO_LABELS, type HeroScene } from "./heroScene";
 import styles from "./Hero.module.css";
 
-/* Первый экран: слева — тезис, справа — живая схема продукта. Под схемой —
-   билет текущего запроса: что написал сотрудник и что с этим сделал шлюз. */
+/* Первый экран: слева — тезис, справа — живая схема продукта (или ролик,
+   когда он готов). Под схемой — билет текущего запроса: что написал
+   сотрудник и что с этим сделал шлюз. */
 export default function Hero() {
+  return (
+    <section id="top" className={styles.hero} aria-labelledby="hero-title">
+      <div className={cx("wrap", styles.grid)}>
+        <div className={styles.copy}>
+          <h1 id="hero-title" className={styles.title}>
+            Защита, которая окупает себя
+          </h1>
+          <p className={styles.sub}>
+            {nb("Все запросы сотрудников и ИИ-агентов к нейросетям — через один шлюз внутри вашего контура.")}
+          </p>
+          <div className={styles.actions}>
+            <Link className="btn btn-primary" href="#pilot">
+              Запросить пилот <span className="arr" aria-hidden="true">→</span>
+            </Link>
+            <Link className={styles.textLink} href="#protect">
+              Как устроен шлюз
+            </Link>
+          </div>
+        </div>
+        {HERO_VIDEO ? <HeroVideo src={HERO_VIDEO.src} poster={HERO_VIDEO.poster} /> : <HeroScheme />}
+      </div>
+    </section>
+  );
+}
+
+function PauseIcon({ paused }: { paused: boolean }) {
+  return (
+    <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true">
+      <path d={paused ? "M4 2.5v11l9-5.5z" : "M4 2.5h3v11H4zM9 2.5h3v11H9z"} fill="currentColor" />
+    </svg>
+  );
+}
+
+/* ролик при старте: без звука, по кругу, с паузой */
+function HeroVideo({ src, poster }: { src: string; poster?: string }) {
+  const ref = useRef<HTMLVideoElement>(null);
+  const [paused, setPaused] = useState(false);
+  return (
+    <figure className={styles.figure}>
+      <div className={cx(styles.stage, styles.videoStage)} data-ready="">
+        <video ref={ref} className={styles.video} src={src} poster={poster} autoPlay muted loop playsInline />
+        <button
+          type="button"
+          className={styles.pause}
+          onClick={() => {
+            const v = ref.current;
+            if (!v) return;
+            if (v.paused) v.play();
+            else v.pause();
+            setPaused(v.paused);
+          }}
+          aria-label={paused ? "Продолжить видео" : "Остановить видео"}
+          aria-pressed={paused}
+        >
+          <PauseIcon paused={paused} />
+        </button>
+      </div>
+    </figure>
+  );
+}
+
+function HeroScheme() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const labelRefs = useRef<(HTMLSpanElement | null)[]>([]);
   const [now, setNow] = useState<{ story: number; phase: Phase }>({ story: 0, phase: "go" });
@@ -50,99 +116,70 @@ export default function Hero() {
   const dest = destName(s.to);
 
   return (
-    <section id="top" className={styles.hero} aria-labelledby="hero-title">
-      <div className={cx("wrap", styles.grid)}>
-        <div className={styles.copy}>
-          <h1 id="hero-title" className={styles.title}>
-            Защита, которая окупает себя
-          </h1>
-          <p className={styles.sub}>
-            Все запросы сотрудников и ИИ-агентов к нейросетям — через один шлюз внутри вашего контура.
-          </p>
-          <div className={styles.actions}>
-            <a className="btn btn-primary" href="#pilot">
-              Запросить пилот <span className="arr" aria-hidden="true">→</span>
-            </a>
-            <a className={styles.textLink} href="#pricing">
-              Рассчитать лицензию
-            </a>
+    <figure className={styles.figure}>
+      <div className={styles.stage} data-ready={ready || undefined}>
+        <canvas ref={canvasRef} className={styles.canvas} aria-hidden="true" />
+        {failed && (
+          <div className={styles.fallback} aria-hidden="true">
+            <LogoMark size={260} thick={false} />
           </div>
-        </div>
-
-        <figure className={styles.figure}>
-          <div className={styles.stage} data-ready={ready || undefined}>
-            <canvas ref={canvasRef} className={styles.canvas} aria-hidden="true" />
-            {failed && (
-              <div className={styles.fallback} aria-hidden="true">
-                <LogoMark size={260} thick={false} />
-              </div>
-            )}
-            <div className={styles.labels} aria-hidden="true">
-              {HERO_LABELS.map((l, i) => (
-                <span
-                  key={l.id}
-                  ref={(el) => {
-                    labelRefs.current[i] = el;
-                  }}
-                  className={styles.label}
-                  data-side={l.side}
-                  data-kind={l.kind}
-                >
-                  {l.kind !== "core" && <i className={styles.dot} />}
-                  <span className={styles.labelText}>{l.text}</span>
-                </span>
-              ))}
-            </div>
-            <button
-              type="button"
-              className={styles.pause}
-              onClick={() => setPaused((p) => !p)}
-              aria-label={paused ? "Продолжить анимацию" : "Остановить анимацию"}
-              aria-pressed={paused}
+        )}
+        <div className={styles.labels} aria-hidden="true">
+          {HERO_LABELS.map((l, i) => (
+            <span
+              key={l.id}
+              ref={(el) => {
+                labelRefs.current[i] = el;
+              }}
+              className={styles.label}
+              data-side={l.side}
+              data-kind={l.kind}
             >
-              {paused ? (
-                <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true">
-                  <path d="M4 2.5v11l9-5.5z" fill="currentColor" />
-                </svg>
-              ) : (
-                <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true">
-                  <path d="M4 2.5h3v11H4zM9 2.5h3v11H9z" fill="currentColor" />
-                </svg>
-              )}
-            </button>
-          </div>
-
-          {/* билет текущего запроса */}
-          <figcaption className={styles.ticket} aria-live="off">
-            <div key={now.story} className={styles.ticketIn}>
-              <span className={styles.who}>{DEPTS[s.from]}</span>
-              <p className={styles.req}>
-                «
-                {s.text.map((p, i) =>
-                  typeof p === "string" ? (
-                    <span key={i}>{p}</span>
-                  ) : (
-                    <span key={i} className={styles.plate} data-flip={processed || undefined}>
-                      <span className={styles.face}>{p.value}</span>
-                      <span className={cx(styles.face, styles.back)}>{p.token}</span>
-                    </span>
-                  ),
-                )}
-                »
-              </p>
-              <span className={styles.verdict} data-tone={s.tone} data-on={shown || undefined}>
-                {dest ? <b>→ {dest}</b> : <b>стоп</b>}
-                <span>{s.verdict}</span>
-              </span>
-            </div>
-          </figcaption>
-          <p className="sr-only">
-            Схема: запросы юристов, маркетинга, финансов, разработки и ИИ-агентов идут к нейросетям только через Кордон
-            внутри вашего контура. Персональные данные и ключи заменяются метками, простые задачи уходят в модель дешевле,
-            закрытые данные — в локальную модель, запросы сверх лимита останавливаются.
-          </p>
-        </figure>
+              {l.kind !== "core" && l.kind !== "zone" && <i className={styles.dot} />}
+              <span className={styles.labelText}>{l.text}</span>
+            </span>
+          ))}
+        </div>
+        <button
+          type="button"
+          className={styles.pause}
+          onClick={() => setPaused((p) => !p)}
+          aria-label={paused ? "Продолжить анимацию" : "Остановить анимацию"}
+          aria-pressed={paused}
+        >
+          <PauseIcon paused={paused} />
+        </button>
       </div>
-    </section>
+
+      {/* билет текущего запроса */}
+      <figcaption className={styles.ticket} aria-live="off">
+        <div key={now.story} className={styles.ticketIn}>
+          <span className={styles.who}>{DEPTS[s.from]}</span>
+          <p className={styles.req}>
+            «
+            {s.text.map((p, i) =>
+              typeof p === "string" ? (
+                <span key={i}>{p}</span>
+              ) : (
+                <span key={i} className={styles.plate} data-flip={processed || undefined}>
+                  <span className={styles.face}>{p.value}</span>
+                  <span className={cx(styles.face, styles.back)}>{p.token}</span>
+                </span>
+              ),
+            )}
+            »
+          </p>
+          <span className={styles.verdict} data-tone={s.tone} data-on={shown || undefined}>
+            {dest ? <b>→ {dest}</b> : <b>стоп</b>}
+            <span>{s.verdict}</span>
+          </span>
+        </div>
+      </figcaption>
+      <p className="sr-only">
+        Схема: стена периметра отделяет вашу компанию от внешних моделей. Запросы юристов, маркетинга, финансов,
+        разработки и ИИ-агентов проходят через единственный проход — шлюз Кордон. Персональные данные и ключи
+        заменяются метками, закрытые данные уходят в локальную модель внутри, запросы сверх лимита останавливаются.
+      </p>
+    </figure>
   );
 }

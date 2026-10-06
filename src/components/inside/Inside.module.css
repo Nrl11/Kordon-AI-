@@ -84,17 +84,18 @@
   align-items: center;
   gap: 6px;
 }
+/* примеры — текстом, выбранный подчёркнут */
 .tab {
   min-height: 36px;
-  padding: 0 14px;
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  border-radius: 999px;
+  padding: 0 8px;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  border-radius: 0;
   background: transparent;
-  font-size: 0.8125rem;
+  font-size: 0.875rem;
   font-weight: 600;
   color: var(--on-ink-2);
   transition:
-    background-color 0.2s,
     color 0.2s,
     border-color 0.2s;
 }
@@ -102,9 +103,8 @@
   color: #ffffff;
 }
 .tab[aria-selected="true"] {
-  border-color: #ffffff;
-  background: #ffffff;
-  color: var(--ink);
+  border-bottom-color: #ffffff;
+  color: #ffffff;
 }
 .pause {
   display: grid;

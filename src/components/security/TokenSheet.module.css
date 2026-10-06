@@ -1,0 +1,105 @@
+.wrap {
+  display: grid;
+  grid-template-columns: minmax(0, 1.5fr) minmax(0, 0.5fr);
+  align-items: start;
+  gap: clamp(24px, 3vw, 48px);
+}
+
+/* лист меток: тёмный, как всё, что уходит наружу; метки — золотые */
+.sheet {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1px;
+  border-radius: 24px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 40px 80px -56px rgba(11, 19, 36, 0.7);
+}
+.cell {
+  display: grid;
+  grid-template-rows: auto auto 1fr;
+  gap: 8px;
+  min-height: clamp(150px, 20vh, 184px);
+  padding: 18px 18px 20px;
+  background: var(--ink);
+  color: #ffffff;
+}
+.what {
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--on-ink-2);
+}
+.raw {
+  font-size: 0.9375rem;
+  color: rgba(255, 255, 255, 0.55);
+  text-decoration-color: #ff6b5e;
+  text-decoration-thickness: 2px;
+}
+.token {
+  justify-self: start;
+  align-self: end;
+  padding: 4px 10px;
+  border-radius: 8px;
+  background: var(--gold);
+  color: var(--on-gold);
+  font-family: var(--f-display);
+  font-size: 1.15rem;
+  font-weight: 800;
+  letter-spacing: 0.01em;
+}
+
+@media (scripting: enabled) and (prefers-reduced-motion: no-preference) {
+  .token {
+    opacity: 0;
+    transform: perspective(500px) rotateX(-90deg);
+    transition:
+      opacity 0.3s,
+      transform 0.6s var(--ease-out);
+    transition-delay: calc(0.25s + var(--i) * 0.09s);
+  }
+  .sheet[data-in] .token {
+    opacity: 1;
+    transform: none;
+  }
+  .raw {
+    text-decoration-color: transparent;
+    transition: text-decoration-color 0.4s;
+    transition-delay: calc(0.15s + var(--i) * 0.09s);
+  }
+  .sheet[data-in] .raw {
+    text-decoration-color: #ff6b5e;
+  }
+}
+
+.notes {
+  display: grid;
+  gap: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: 2px solid var(--ink);
+}
+.notes li {
+  padding: 16px 0;
+  border-bottom: 1px solid var(--rule-2);
+  color: var(--ink-2);
+}
+.notes b {
+  display: block;
+  margin-bottom: 4px;
+  font-family: var(--f-display);
+  font-size: 1.15rem;
+  color: var(--ink);
+}
+
+@media (max-width: 1100px) {
+  .wrap {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+@media (max-width: 760px) {
+  .sheet {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}

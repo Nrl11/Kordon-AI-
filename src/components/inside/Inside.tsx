@@ -62,7 +62,7 @@ const breaks = (r: DOMRect[]) => r.map((b, i) => i > 0 && b.top + b.height / 2 -
    Размеры не анимируем — иначе строки перестраиваются прямо в полёте.
    Если слова переезжают на другие строки, они пролетели бы сквозь соседей —
    тогда строка мягко гаснет на старом месте и проявляется на новом. */
-function relayout(box: HTMLElement, tiles: HTMLElement[], change: () => void, duration = 0.85) {
+function relayout(box: HTMLElement, tiles: HTMLElement[], change: () => void, duration = 0.6) {
   const before = tiles.map((t) => t.getBoundingClientRect());
   const h0 = box.offsetHeight;
   /* снимок строки до перемены — понадобится, если слова переедут по строкам */
@@ -102,7 +102,7 @@ function relayout(box: HTMLElement, tiles: HTMLElement[], change: () => void, du
   if (Math.abs(h0 - h1) > 0.5) gsap.fromTo(box, { height: h0 }, { height: h1, duration, ease: "power3.inOut", clearProps: "height" });
 }
 
-export default function Inside() {
+export default function Inside({ bare = false }: { bare?: boolean }) {
   const [ex, setEx] = useState(0);
   const [step, setStep] = useState<Step>(0);
   const [rows, setRows] = useState(0);
@@ -401,9 +401,11 @@ export default function Inside() {
           );
         });
       }
-      tl.to({}, { duration: 3 });
+      tl.to({}, { duration: 3.6 });
       /* мягкий уход перед следующим примером */
       tl.to([text, ...allHl], { opacity: 0, duration: 0.45, ease: "power2.in" });
+      /* сцена идёт в полтора раза быстрее записанных длительностей */
+      tl.timeScale(1.45);
       tlRef.current = tl;
       sync();
     }, rootRef);
@@ -416,21 +418,12 @@ export default function Inside() {
 
   const e = EXAMPLES[ex];
   const g = width ? routeGeometry(width) : null;
-  return (
-    <section id="how" className={styles.section} aria-labelledby="inside-title">
-      <div className="wrap">
-        <div className="section-head">
-          <h2 id="inside-title" className={cx("h2", styles.title)}>
-            Что Кордон делает с&nbsp;запросом
-          </h2>
-        </div>
-
+  const stage = (
         <div ref={rootRef} className={styles.stage}>
           <div className={styles.top}>
             <ol className={styles.steps} aria-label="Шаги обработки">
               {STEPS.map((s, i) => (
                 <li key={s} data-on={i === step || undefined} data-done={i < step || undefined}>
-                  <span className={styles.num}>{String(i + 1).padStart(2, "0")}</span>
                   {s}
                 </li>
               ))}
@@ -492,6 +485,17 @@ export default function Inside() {
             </aside>
           </div>
         </div>
+  );
+  if (bare) return stage;
+  return (
+    <section id="how" className={styles.section} aria-labelledby="inside-title">
+      <div className="wrap">
+        <div className="section-head">
+          <h2 id="inside-title" className={cx("h2", styles.title)}>
+            Что Кордон делает с&nbsp;запросом
+          </h2>
+        </div>
+        {stage}
       </div>
     </section>
   );

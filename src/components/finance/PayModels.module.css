@@ -1,0 +1,91 @@
+/* три способа — тремя карточками с одинаковыми шкалами */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(14px, 1.8vw, 28px);
+}
+.card {
+  display: grid;
+  grid-template-rows: auto auto 1fr auto;
+  gap: 10px;
+  padding: clamp(20px, 3vh, 28px) clamp(20px, 2vw, 28px);
+  border-radius: 24px;
+  background: var(--paper);
+  box-shadow:
+    0 0 0 1px var(--rule),
+    0 24px 48px -40px rgba(11, 19, 36, 0.35);
+}
+.tag {
+  justify-self: start;
+  padding: 4px 10px;
+  border-radius: 8px;
+  background: var(--paper-2);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: var(--ink-2);
+}
+.card[data-k="pool"] .tag {
+  background: rgba(217, 58, 47, 0.1);
+  color: var(--red);
+}
+.card h3 {
+  font-family: var(--f-display);
+  font-size: clamp(1.3rem, 1.1rem + 0.6vw, 1.65rem);
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+.card p {
+  color: var(--ink-2);
+  text-wrap: pretty;
+}
+
+/* шкалы: три точки и слово */
+.scales {
+  display: grid;
+  gap: 8px;
+  margin: 6px 0 0;
+  padding-top: 14px;
+  border-top: 1px solid var(--rule);
+}
+.scales div {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px;
+}
+.scales dt {
+  font-size: 0.875rem;
+  color: var(--ink-2);
+}
+.scales dd {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+  font-size: 0.875rem;
+  font-weight: 700;
+}
+.dots {
+  display: inline-flex;
+  gap: 4px;
+}
+.dots i {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--paper-3);
+}
+.dots i[data-on] {
+  background: var(--ink);
+}
+/* риск — красным, чтобы его было видно */
+.scales div[data-k="risk"] .dots i[data-on] {
+  background: var(--red);
+}
+
+@media (max-width: 900px) {
+  .grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

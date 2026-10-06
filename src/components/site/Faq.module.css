@@ -1,0 +1,36 @@
+.faq {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0 clamp(24px, 4vw, 64px);
+  margin: 0;
+}
+.item {
+  display: grid;
+  gap: 8px;
+  padding: 20px 0;
+  border-top: 1px solid var(--rule-2);
+}
+.item:nth-child(-n + 2) {
+  border-top: 2px solid var(--ink);
+}
+.item dt {
+  font-family: var(--f-display);
+  font-size: 1.2rem;
+  font-weight: 700;
+  line-height: 1.25;
+  letter-spacing: -0.015em;
+}
+.item dd {
+  margin: 0;
+  max-width: 54ch;
+  color: var(--ink-2);
+}
+
+@media (max-width: 900px) {
+  .faq {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .item:nth-child(2) {
+    border-top: 1px solid var(--rule-2);
+  }
+}

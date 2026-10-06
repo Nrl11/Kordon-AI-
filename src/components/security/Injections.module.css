@@ -1,0 +1,159 @@
+.wrap {
+  display: grid;
+  grid-template-columns: minmax(0, 0.7fr) minmax(0, 1.3fr);
+  align-items: center;
+  gap: clamp(24px, 4vw, 64px);
+}
+
+/* виды атак — кнопками, текущая подсвечена */
+.types {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: 2px solid var(--ink);
+}
+.types button {
+  display: grid;
+  gap: 2px;
+  width: 100%;
+  padding: clamp(14px, 2.2vh, 20px) 0 clamp(14px, 2.2vh, 20px) 16px;
+  border: 0;
+  border-bottom: 1px solid var(--rule-2);
+  background: none;
+  font: inherit;
+  text-align: left;
+  color: var(--ink-3);
+  cursor: pointer;
+  box-shadow: inset 0 0 0 transparent;
+  transition:
+    color 0.25s,
+    box-shadow 0.25s;
+}
+.types b {
+  font-family: var(--f-display);
+  font-size: clamp(1.15rem, 1rem + 0.45vw, 1.4rem);
+  font-weight: 700;
+  letter-spacing: -0.015em;
+}
+.types span {
+  font-size: 0.875rem;
+}
+.types button[data-on] {
+  color: var(--ink);
+  box-shadow: inset 3px 0 0 var(--red);
+}
+.types button:hover {
+  color: var(--ink);
+}
+.types button:focus-visible {
+  outline: 2px solid var(--blue);
+  outline-offset: 2px;
+}
+
+/* тёмная сцена с документом */
+.stage {
+  display: grid;
+  gap: 16px;
+  padding: clamp(22px, 3.4vh, 36px) clamp(20px, 3vw, 44px);
+  border-radius: 28px;
+  background: #111c33;
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.08),
+    0 50px 90px -60px rgba(11, 19, 36, 0.8);
+}
+.doc {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 20px 22px;
+  border-radius: 16px;
+  background: #ffffff;
+  color: var(--ink);
+  animation: in 0.4s var(--ease-out) both;
+}
+@keyframes in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+.doc figcaption {
+  display: grid;
+  gap: 2px;
+  padding-bottom: 10px;
+  margin-bottom: 4px;
+  border-bottom: 1px solid var(--rule);
+}
+.doc figcaption b {
+  font-family: var(--f-display);
+  font-weight: 700;
+}
+.doc figcaption span {
+  font-size: 0.8125rem;
+  color: var(--ink-3);
+}
+.doc p {
+  line-height: 1.5;
+}
+/* спрятанная команда: почти невидима, пока Кордон её не нашёл */
+.hidden {
+  justify-self: start;
+  padding: 2px 6px;
+  margin-left: -6px;
+  border-radius: 6px;
+  color: #f2f3f6;
+  transition:
+    color 0.5s,
+    background-color 0.5s,
+    box-shadow 0.5s;
+}
+.doc[data-found] .hidden {
+  color: var(--red);
+  background: rgba(217, 58, 47, 0.08);
+  box-shadow: inset 0 0 0 1.5px rgba(217, 58, 47, 0.55);
+  text-decoration: line-through 2px rgba(217, 58, 47, 0.7);
+}
+
+.verdict {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.6);
+}
+.verdict i {
+  flex: none;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--gold);
+  animation: pulse 1s ease-in-out infinite;
+}
+.verdict[data-on] {
+  color: #ff8a7f;
+}
+.verdict[data-on] i {
+  background: #ff6b5e;
+  animation: none;
+}
+@keyframes pulse {
+  50% {
+    opacity: 0.3;
+  }
+}
+
+@media (max-width: 900px) {
+  .wrap {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .doc,
+  .verdict i {
+    animation: none;
+  }
+  .hidden {
+    transition: none;
+  }
+}

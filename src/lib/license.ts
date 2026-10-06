@@ -1,6 +1,8 @@
-import type { Size } from "./pilot";
+import type { Size } from "./lead";
 
-/* «Получить цену» в блоке лицензии передаёт выбранную конфигурацию в форму заявки. */
+/* «Получить цену» на странице стоимости передаёт выбранную конфигурацию
+   в форму заявки на странице «Как начать». Это не персданные — только
+   ступень и модули, поэтому их можно держать в sessionStorage. */
 
 export interface LicenseIntent {
   count: number;
@@ -8,16 +10,26 @@ export interface LicenseIntent {
   modules: string[];
 }
 
-const EVENT = "kordon:license";
+const KEY = "kordon:license";
 
 export function requestLicense(detail: LicenseIntent) {
-  window.dispatchEvent(new CustomEvent<LicenseIntent>(EVENT, { detail }));
+  try {
+    sessionStorage.setItem(KEY, JSON.stringify(detail));
+  } catch {
+    /* хранилище недоступно — форма просто откроется без конфигурации */
+  }
 }
 
-export function onLicense(cb: (d: LicenseIntent) => void) {
-  const h = (e: Event) => cb((e as CustomEvent<LicenseIntent>).detail);
-  window.addEventListener(EVENT, h);
-  return () => window.removeEventListener(EVENT, h);
+export function takeLicense(): LicenseIntent | null {
+  try {
+    const raw = sessionStorage.getItem(KEY);
+    if (!raw) return null;
+    sessionStorage.removeItem(KEY);
+    const d = JSON.parse(raw) as LicenseIntent;
+    return typeof d.tier === "string" && Array.isArray(d.modules) ? d : null;
+  } catch {
+    return null;
+  }
 }
 
 export const describeLicense = (d: LicenseIntent) =>

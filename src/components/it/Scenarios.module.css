@@ -1,0 +1,118 @@
+/* три колонки: ситуация, ручная работа (перечёркивается), одно действие */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(14px, 1.8vw, 28px);
+}
+.case {
+  display: grid;
+  grid-template-rows: auto auto 1fr;
+  gap: clamp(12px, 1.8vh, 18px);
+  padding: clamp(18px, 2.6vh, 26px) clamp(18px, 1.8vw, 26px);
+  border-radius: 24px;
+  background: var(--paper-2);
+}
+.case h3 {
+  font-family: var(--f-display);
+  font-size: clamp(1.5rem, 1.15rem + 1vw, 2.2rem);
+  font-weight: 700;
+  line-height: 1.02;
+  letter-spacing: -0.035em;
+}
+.case small {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.before small {
+  color: var(--red);
+}
+.before ul {
+  display: grid;
+  gap: 3px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.before li {
+  color: var(--ink-2);
+  line-height: 1.4;
+}
+/* красная линия по тексту каждой строки */
+.strike {
+  background-image: linear-gradient(rgba(217, 58, 47, 0.9), rgba(217, 58, 47, 0.9));
+  background-repeat: no-repeat;
+  background-position: 0 58%;
+  background-size: 100% 2px;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+.grid[data-on] .before li {
+  color: var(--ink-3);
+}
+
+/* одно действие — белая плашка с золотой кромкой сверху */
+.after {
+  padding: 14px 16px 16px;
+  border-radius: 16px;
+  background: var(--paper);
+  box-shadow:
+    inset 0 3px 0 var(--gold),
+    0 18px 36px -30px rgba(11, 19, 36, 0.4);
+}
+.after small {
+  color: var(--gold-ink);
+}
+.after b {
+  display: block;
+  font-family: var(--f-display);
+  font-size: clamp(1.15rem, 1rem + 0.45vw, 1.4rem);
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+}
+.after p {
+  margin-top: 6px;
+  font-size: 0.9375rem;
+  line-height: 1.45;
+  color: var(--ink-2);
+}
+
+/* порядок: колонка за колонкой — строки перечёркиваются сверху вниз,
+   затем появляется действие */
+@media (scripting: enabled) and (prefers-reduced-motion: no-preference) {
+  .strike {
+    background-size: 0% 2px;
+    transition: background-size 0.55s var(--ease-in-out);
+    transition-delay: calc(0.3s + var(--i) * 0.9s + var(--k) * 0.16s);
+  }
+  .before li {
+    transition: color 0.4s;
+    transition-delay: calc(0.5s + var(--i) * 0.9s);
+  }
+  .after {
+    opacity: 0;
+    transform: translateY(10px);
+    transition:
+      opacity 0.5s var(--ease-out),
+      transform 0.5s var(--ease-out);
+    transition-delay: calc(1s + var(--i) * 0.9s);
+  }
+  .grid[data-on] .strike {
+    background-size: 100% 2px;
+  }
+  .grid[data-on] .after {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (max-width: 900px) {
+  .grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

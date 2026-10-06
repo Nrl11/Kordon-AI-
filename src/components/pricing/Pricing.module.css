@@ -1,8 +1,13 @@
-/* ——— конфигуратор лицензии: слева выбор, справа итог ——— */
-.config {
+/* ——— шапка-конфигуратор: слева заголовок и итог, справа выбор ——— */
+.hero {
   display: grid;
-  grid-template-columns: minmax(0, 1.55fr) minmax(300px, 1fr);
-  gap: 14px;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  align-items: start;
+  gap: clamp(24px, 4vw, 64px);
+}
+.left {
+  display: grid;
+  align-content: start;
 }
 
 .setup {
@@ -76,20 +81,9 @@
 }
 
 .who {
-  display: flex;
-  align-items: center;
-  gap: 12px;
   font-size: 0.9375rem;
   color: var(--ink-2);
-}
-.whoIcons {
-  display: inline-flex;
-  flex: none;
-  gap: 2px;
-  padding: 6px 8px;
-  border-radius: 999px;
-  background: var(--paper-2);
-  color: var(--ink);
+  text-wrap: pretty;
 }
 
 /* модули */
@@ -175,8 +169,9 @@
   position: relative;
   display: flex;
   flex-direction: column;
-  gap: 14px;
-  padding: clamp(20px, 3.4vh, 36px) clamp(24px, 3vw, 40px);
+  gap: 10px;
+  margin-top: clamp(20px, 3.4vh, 32px);
+  padding: clamp(18px, 2.8vh, 28px) clamp(20px, 2.4vw, 32px);
   border-radius: 28px;
   background: var(--ink);
   color: var(--on-ink);
@@ -238,38 +233,18 @@
   font-size: 0.875rem;
   color: var(--on-ink-2);
 }
-.result :global(.btn) {
-  align-self: flex-start;
-  margin-top: auto;
-}
-
-.terms {
-  grid-column: 1 / -1;
+.resFoot {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px 28px;
-  margin: 10px 0 0;
-  padding: 0 4px;
-  list-style: none;
-  font-size: 0.9375rem;
-  font-weight: 500;
-}
-.terms li {
-  display: flex;
   align-items: center;
-  gap: 10px;
-}
-.terms li::before {
-  content: "";
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--blue);
+  justify-content: space-between;
+  gap: 12px 18px;
+  margin-top: 6px;
 }
 
 @media (max-width: 960px) {
-  .config {
-    grid-template-columns: 1fr;
+  .hero {
+    grid-template-columns: minmax(0, 1fr);
   }
 }
 @media (max-width: 640px) {
@@ -286,8 +261,5 @@
   .steps {
     height: 150px;
     gap: 4px;
-  }
-  .who {
-    align-items: flex-start;
   }
 }

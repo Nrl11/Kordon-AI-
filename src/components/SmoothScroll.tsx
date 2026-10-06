@@ -1,12 +1,17 @@
 "use client";
 
 import { useEffect } from "react";
+import { usePathname } from "next/navigation";
 import Lenis from "lenis";
 import { gsap, ScrollTrigger, matches, REDUCED } from "@/lib/motion";
 
+type W = Window & { __lenis?: Lenis };
+
 /* Плавная прокрутка, синхронная с ScrollTrigger. При сниженной анимации —
-   обычная нативная прокрутка. */
+   обычная нативная прокрутка. При переходе на другую страницу — сразу наверх. */
 export default function SmoothScroll() {
+  const path = usePathname();
+
   useEffect(() => {
     if (matches(REDUCED)) return;
     const lenis = new Lenis({
@@ -18,13 +23,20 @@ export default function SmoothScroll() {
     const tick = (time: number) => lenis.raf(time * 1000);
     gsap.ticker.add(tick);
     gsap.ticker.lagSmoothing(0);
-    (window as unknown as { __lenis?: Lenis }).__lenis = lenis;
+    (window as W).__lenis = lenis;
     return () => {
       gsap.ticker.remove(tick);
       lenis.destroy();
-      delete (window as unknown as { __lenis?: Lenis }).__lenis;
+      delete (window as W).__lenis;
     };
   }, []);
+
+  useEffect(() => {
+    if (location.hash) return;
+    (window as W).__lenis?.scrollTo(0, { immediate: true, force: true });
+    ScrollTrigger.refresh();
+  }, [path]);
+
   return null;
 }
 
@@ -32,7 +44,7 @@ export default function SmoothScroll() {
 export function scrollToId(id: string) {
   const el = document.getElementById(id);
   if (!el) return;
-  const lenis = (window as unknown as { __lenis?: Lenis }).__lenis;
+  const lenis = (window as W).__lenis;
   if (lenis) lenis.scrollTo(el, { offset: -64 });
   else el.scrollIntoView({ behavior: matches(REDUCED) ? "auto" : "smooth", block: "start" });
 }

@@ -1,0 +1,358 @@
+/* ——— Вебпрактик AI: логотип в шапке секции и шесть направлений ——— */
+.aiLogo {
+  display: grid;
+  justify-items: end;
+  gap: 6px;
+  color: var(--blue-ink);
+  font-weight: 600;
+  text-decoration: none;
+}
+.aiLogo img {
+  width: 172px;
+  height: auto;
+}
+.aiLogo:hover span {
+  text-decoration: underline;
+}
+/* тёмная панель направления: логотип, шесть направлений сеткой с тонкими линиями */
+.aiPanel {
+  overflow: hidden;
+  border-radius: 32px;
+  background:
+    radial-gradient(60% 80% at 85% 0%, rgba(124, 147, 242, 0.16), transparent 70%),
+    var(--ink);
+  color: #ffffff;
+  box-shadow: 0 50px 90px -60px rgba(11, 19, 36, 0.8);
+}
+.aiTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: clamp(18px, 2.8vh, 26px) clamp(22px, 2.6vw, 36px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+.aiTop img {
+  width: clamp(150px, 14vw, 200px);
+  height: auto;
+}
+.aiTop a {
+  color: var(--gold-2);
+  font-weight: 700;
+  text-decoration: none;
+}
+.aiTop a:hover {
+  text-decoration: underline;
+}
+.aiList {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1px;
+  background: rgba(255, 255, 255, 0.1);
+}
+.aiList div {
+  display: grid;
+  align-content: start;
+  gap: 8px;
+  padding: clamp(20px, 3.2vh, 30px) clamp(22px, 2.6vw, 36px);
+  background: var(--ink);
+  transition: background-color 0.3s;
+}
+.aiList div:hover {
+  background: #111c33;
+}
+.aiList small {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--on-ink-2);
+}
+.aiList b {
+  font-family: var(--f-display);
+  font-size: clamp(1.3rem, 1.1rem + 0.6vw, 1.65rem);
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.025em;
+}
+.aiList p {
+  max-width: 36ch;
+  color: var(--on-ink-2);
+  text-wrap: pretty;
+}
+/* направление, из которого вырос Кордон */
+.aiList div[data-key] {
+  background:
+    linear-gradient(180deg, rgba(224, 176, 74, 0.14), rgba(224, 176, 74, 0.04)),
+    var(--ink);
+  box-shadow: inset 0 3px 0 var(--gold);
+}
+.aiList div[data-key] small,
+.aiList div[data-key] b {
+  color: var(--gold-2);
+}
+
+/* ——— руководители: фото, имя, роль, канал ——— */
+.leaders {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(20px, 3vw, 48px);
+}
+.leader {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  gap: 18px;
+}
+.portrait {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: 24px;
+  overflow: hidden;
+  background: var(--ink);
+}
+.portrait img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.portrait span {
+  font-family: var(--f-display);
+  font-size: clamp(1.8rem, 1.4rem + 1vw, 2.5rem);
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  color: var(--gold-2);
+}
+.who {
+  display: grid;
+  align-content: start;
+  gap: 6px;
+}
+.who h3 {
+  font-family: var(--f-display);
+  font-size: clamp(1.4rem, 1.15rem + 0.7vw, 1.8rem);
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+}
+.who p {
+  color: var(--ink-2);
+  text-wrap: balance;
+}
+.tg {
+  display: grid;
+  gap: 2px;
+  padding-top: 12px;
+  border-top: 1px solid var(--rule-2);
+  color: inherit;
+  text-decoration: none;
+}
+.tg span {
+  font-size: 0.875rem;
+  color: var(--ink-3);
+}
+.tg b {
+  font-weight: 700;
+  color: var(--blue-ink);
+}
+.tg:hover b {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* ——— стена клиентов: плитки под логотипы ——— */
+.wall {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 1px;
+  border-radius: 20px;
+  overflow: hidden;
+  background: var(--rule);
+  box-shadow: 0 0 0 1px var(--rule);
+}
+.tile,
+.tileMore {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-height: clamp(96px, 13.5vh, 132px);
+  padding: 26px 14px 18px;
+  background: #ffffff;
+  text-align: center;
+}
+.field {
+  position: absolute;
+  top: 12px;
+  left: 14px;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+.tile b {
+  font-family: var(--f-display);
+  font-size: clamp(1.05rem, 0.85rem + 0.5vw, 1.35rem);
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: -0.035em;
+  color: var(--ink);
+  text-wrap: balance;
+}
+.tile img {
+  max-width: 78%;
+  max-height: 40px;
+  object-fit: contain;
+  transition: transform 0.3s var(--ease-out);
+}
+.tile:hover img {
+  transform: scale(1.05);
+}
+.tileMore {
+  grid-column: span 2;
+  align-content: center;
+  gap: 4px;
+  background: var(--ink);
+  color: #ffffff;
+  text-decoration: none;
+}
+.tileMore b {
+  font-family: var(--f-display);
+  font-size: clamp(1.8rem, 1.4rem + 1vw, 2.4rem);
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.04em;
+  color: var(--gold-2);
+}
+.tileMore span {
+  font-size: 0.875rem;
+  color: var(--on-ink-2);
+}
+.tileMore:hover span {
+  color: #ffffff;
+}
+
+/* ——— рейтинги: четыре первых места ——— */
+.awards {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: clamp(20px, 3vw, 44px);
+}
+.awards article {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  gap: 12px;
+  padding-top: 18px;
+  border-top: 2px solid var(--ink);
+}
+.place {
+  font-family: var(--f-display);
+  font-size: clamp(3.4rem, 2.4rem + 3vw, 5.6rem);
+  font-weight: 800;
+  line-height: 0.9;
+  letter-spacing: -0.06em;
+  color: var(--gold-deep);
+}
+.place small {
+  margin-right: 0.08em;
+  font-size: 0.42em;
+  letter-spacing: 0;
+  vertical-align: 0.95em;
+}
+.awards p {
+  font-family: var(--f-display);
+  font-size: clamp(1.1rem, 1rem + 0.35vw, 1.3rem);
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.015em;
+  text-wrap: balance;
+}
+.awards span {
+  font-size: 0.875rem;
+  color: var(--ink-3);
+}
+
+/* ——— канал ——— */
+.channel {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+  align-items: center;
+  gap: clamp(20px, 3vw, 56px);
+  padding: clamp(26px, 3.4vw, 52px);
+  border-radius: 32px;
+  background: var(--ink);
+  color: #ffffff;
+}
+.channel h2 {
+  font-family: var(--f-display);
+  font-size: var(--t-h2);
+  font-weight: 700;
+  line-height: 1.02;
+  letter-spacing: -0.04em;
+  color: #ffffff;
+  text-wrap: balance;
+}
+.channel p {
+  max-width: 44ch;
+  margin-top: 14px;
+  color: var(--on-ink-2);
+}
+.channel :global(.btn) {
+  margin-top: 24px;
+}
+.rubrics {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.rubrics li {
+  padding: 14px 0;
+  border-top: 1px solid var(--on-ink-rule);
+  font-family: var(--f-display);
+  font-size: clamp(1.1rem, 0.95rem + 0.5vw, 1.4rem);
+  font-weight: 600;
+  letter-spacing: -0.015em;
+}
+
+@media (max-width: 1100px) {
+  .wall {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .awards {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 900px) {
+  .aiList,
+  .leaders,
+  .channel {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .leader {
+    grid-template-columns: auto minmax(0, 1fr);
+    grid-template-rows: auto;
+    align-items: center;
+    gap: 6px 18px;
+  }
+  .leader .tg {
+    grid-column: 1 / -1;
+  }
+  .leader .portrait {
+    width: 112px;
+    border-radius: 18px;
+  }
+}
+@media (max-width: 560px) {
+  .wall {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .awards {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .portrait {
+    width: 88px;
+    border-radius: 16px;
+  }
+}

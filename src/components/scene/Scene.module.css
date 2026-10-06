@@ -1,0 +1,256 @@
+/* Общий язык сцен-маршрутов: тёмная сцена, зона компании с синей кромкой,
+   внешняя зона пунктиром, тонкие пути, точка запроса и знак Кордона. */
+
+.stage {
+  position: relative;
+  width: 100%;
+  border-radius: 28px;
+  overflow: hidden;
+  background: #111c33;
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.08),
+    0 50px 90px -60px rgba(11, 19, 36, 0.8);
+  color: #ffffff;
+}
+.canvas {
+  position: relative;
+  margin: 0 auto;
+}
+.svg {
+  position: absolute;
+  inset: 0;
+  overflow: visible;
+}
+
+/* зоны */
+.zoneIn {
+  fill: rgba(124, 147, 242, 0.07);
+  stroke: rgba(124, 147, 242, 0.28);
+  stroke-width: 1;
+}
+.zoneOut {
+  fill: rgba(255, 255, 255, 0.025);
+  stroke: rgba(255, 255, 255, 0.14);
+  stroke-width: 1;
+  stroke-dasharray: 4 5;
+}
+.zoneLabel {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  fill: rgba(255, 255, 255, 0.45);
+}
+
+/* пути */
+.base,
+.hl {
+  fill: none;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.base {
+  stroke: rgba(255, 255, 255, 0.13);
+}
+.hl {
+  stroke-width: 2.5;
+  stroke: rgba(255, 255, 255, 0.8);
+}
+.hl[data-tone="ok"] {
+  stroke: var(--gold);
+}
+.hl[data-tone="local"] {
+  stroke: var(--blue-light);
+}
+.hl[data-tone="stop"] {
+  stroke: #ff6b5e;
+}
+.hl[data-tone="fail"] {
+  stroke: #ff6b5e;
+  stroke-dasharray: 5 6;
+}
+
+/* точка запроса и вспышка */
+.dot {
+  fill: #ffffff;
+  stroke: #111c33;
+  stroke-width: 4;
+  paint-order: stroke;
+}
+.dot[data-tone="ok"] {
+  fill: var(--gold);
+}
+.dot[data-tone="local"] {
+  fill: var(--blue-light);
+}
+.dot[data-tone="stop"] {
+  fill: #ff6b5e;
+}
+
+/* знак Кордона */
+.gateBg {
+  fill: #111c33;
+}
+.gateContour {
+  fill: none;
+  stroke: #ffffff;
+  stroke-width: 4;
+  stroke-linecap: round;
+}
+.gateChannel {
+  stroke: var(--gold);
+  stroke-width: 4;
+  stroke-linecap: round;
+}
+.gateDot {
+  fill: var(--gold);
+}
+.gateBusy {
+  fill: none;
+  stroke: var(--gold);
+  stroke-width: 1.5;
+  stroke-dasharray: 3 7;
+  opacity: 0;
+  transform-box: fill-box;
+  transform-origin: center;
+  transition: opacity 0.3s;
+}
+.gate[data-busy] .gateBusy {
+  opacity: 0.9;
+  animation: spin 4s linear infinite;
+}
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.gateLabel {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  fill: var(--gold);
+}
+
+/* узлы — подписи в HTML поверх схемы */
+.node {
+  position: absolute;
+  display: grid;
+  gap: 2px;
+  padding: 9px 12px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.05);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.14);
+  transform: translateY(-50%);
+  transition:
+    background-color 0.3s,
+    box-shadow 0.3s,
+    color 0.3s;
+}
+.node b {
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+.node small {
+  font-size: 12px;
+  line-height: 1.3;
+  color: var(--on-ink-2);
+  white-space: nowrap;
+}
+.node em {
+  font-style: normal;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--gold-2);
+  font-variant-numeric: tabular-nums;
+}
+.node[data-on] {
+  background: rgba(255, 255, 255, 0.12);
+  box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, 0.7);
+}
+.node[data-on][data-tone="ok"] {
+  background: rgba(224, 176, 74, 0.16);
+  box-shadow: inset 0 0 0 1.5px var(--gold);
+}
+.node[data-on][data-tone="local"] {
+  background: rgba(124, 147, 242, 0.18);
+  box-shadow: inset 0 0 0 1.5px var(--blue-light);
+}
+.node[data-kind="local"] {
+  box-shadow: inset 0 0 0 1px rgba(124, 147, 242, 0.45);
+}
+.node[data-dim] {
+  opacity: 0.55;
+}
+
+/* сбой модели и резервная */
+.base[data-fail] {
+  stroke: rgba(255, 107, 94, 0.55);
+  stroke-dasharray: 4 6;
+}
+.node[data-fail] {
+  background: rgba(255, 107, 94, 0.1);
+  box-shadow: inset 0 0 0 1.5px rgba(255, 107, 94, 0.7);
+}
+.node[data-fail] small {
+  color: #ff8a7f;
+}
+.node[data-backup] {
+  box-shadow: inset 0 0 0 1.5px var(--gold);
+}
+.node[data-backup] small {
+  color: var(--gold-2);
+}
+
+/* решение шлюза — подпись у знака */
+.verdict {
+  position: absolute;
+  transform: translate(-50%, 0);
+  padding: 5px 10px;
+  border-radius: 8px;
+  background: #0b1324;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.14);
+  font-size: 13px;
+  font-weight: 700;
+  white-space: nowrap;
+  opacity: 0;
+  transition:
+    opacity 0.25s,
+    transform 0.25s var(--ease-out);
+}
+.verdict[data-on] {
+  opacity: 1;
+  transform: translate(-50%, -4px);
+}
+.verdict[data-tone="ok"] {
+  color: var(--gold-2);
+}
+.verdict[data-tone="local"] {
+  color: var(--blue-light);
+}
+.verdict[data-tone="stop"] {
+  color: #ff8a7f;
+}
+
+.caption {
+  min-height: 2.9em;
+  margin-top: 14px;
+  font-size: 0.9375rem;
+  line-height: 1.45;
+  color: var(--ink-2);
+}
+.caption b {
+  color: var(--ink);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gate[data-busy] .gateBusy {
+    animation: none;
+  }
+  .node,
+  .verdict {
+    transition: none;
+  }
+}

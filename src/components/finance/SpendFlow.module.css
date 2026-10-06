@@ -1,0 +1,285 @@
+.flow {
+  display: grid;
+  gap: clamp(18px, 3vh, 30px);
+}
+.box {
+  width: 100%;
+}
+.canvas {
+  position: relative;
+  width: 100%;
+}
+.svg {
+  position: absolute;
+  left: 0;
+  top: 0;
+  overflow: visible;
+}
+.zone {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  fill: var(--ink-3);
+}
+
+/* слева счета вразнобой — серые ленты; справа отчёт по командам — синие */
+.ribbonIn path:first-child {
+  fill: rgba(11, 19, 36, 0.12);
+  transition: fill 0.35s;
+}
+.ribbonOut path:first-child {
+  fill: rgba(124, 147, 242, 0.32);
+  transition: fill 0.35s;
+}
+.ribbonIn[data-on] path:first-child {
+  fill: rgba(11, 19, 36, 0.26);
+}
+.ribbonOut[data-on] path:first-child {
+  fill: rgba(42, 71, 214, 0.42);
+}
+.ribbonIn,
+.ribbonOut {
+  transform-box: fill-box;
+  transform-origin: left center;
+}
+.center {
+  fill: none;
+  stroke: none;
+}
+
+.barSrc {
+  fill: var(--ink-3);
+}
+.barTeam {
+  fill: var(--blue);
+}
+.gate {
+  fill: var(--gold);
+}
+.mark path {
+  fill: none;
+  stroke: var(--ink);
+  stroke-width: 3;
+  stroke-linecap: round;
+}
+.mark .markCore {
+  stroke: var(--gold);
+}
+.markDot {
+  fill: var(--gold);
+}
+.dot {
+  fill: var(--gold);
+  stroke: var(--paper-2);
+  stroke-width: 3;
+  paint-order: stroke;
+}
+
+/* подписи */
+.label {
+  position: absolute;
+  display: grid;
+  gap: 1px;
+  transform: translateY(-50%);
+  text-align: right;
+  transition: opacity 0.3s;
+}
+.label b {
+  font-family: var(--f-display);
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+.label span {
+  font-size: 0.8125rem;
+  color: var(--ink-2);
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+.label[data-on] b {
+  color: var(--ink);
+  text-decoration: underline 2px var(--gold);
+  text-underline-offset: 4px;
+}
+.team {
+  text-align: left;
+  width: 300px;
+}
+.team b small {
+  margin-left: 4px;
+  font-family: var(--f-text);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  letter-spacing: 0;
+  color: var(--ink-2);
+}
+.team .cost {
+  margin-top: 3px;
+}
+.team .cost i {
+  width: max(4px, calc(var(--w) * 84px));
+  background: var(--gold);
+}
+.team em {
+  font-style: normal;
+  font-weight: 800;
+  color: var(--ink);
+}
+.team[data-on] em {
+  color: var(--gold-ink);
+}
+
+/* расчёт одного запроса — под Кордоном */
+.calc {
+  position: absolute;
+  display: grid;
+  justify-items: center;
+  gap: 1px;
+  width: 280px;
+  padding: 10px 14px;
+  border-radius: 14px;
+  background: var(--paper);
+  box-shadow:
+    0 0 0 1px var(--rule),
+    0 18px 36px -28px rgba(11, 19, 36, 0.45);
+  transform: translateX(-50%);
+  text-align: center;
+  font-size: 0.8125rem;
+  line-height: 1.35;
+  animation: calcIn 0.4s var(--ease-out) both;
+}
+.calc b {
+  font-size: 0.875rem;
+}
+.calc span {
+  color: var(--ink-2);
+}
+.calc em {
+  margin-top: 2px;
+  font-family: var(--f-display);
+  font-size: 1.05rem;
+  font-style: normal;
+  font-weight: 800;
+  color: var(--ink-3);
+  font-variant-numeric: tabular-nums;
+  transition: color 0.3s;
+}
+.calc[data-at="gate"] em,
+.calc[data-at="team"] em {
+  color: var(--gold-ink);
+}
+@keyframes calcIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 6px);
+  }
+}
+
+/* три вывода под схемой */
+.facts {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px clamp(20px, 3vw, 44px);
+  margin: 0;
+  padding-top: 16px;
+  border-top: 1px solid var(--rule-2);
+}
+.facts dt {
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: var(--ink-3);
+}
+.facts dd {
+  margin: 2px 0 0;
+  font-family: var(--f-display);
+  font-size: clamp(1.05rem, 0.95rem + 0.35vw, 1.25rem);
+  font-weight: 700;
+  letter-spacing: -0.015em;
+}
+
+/* узкий экран: два списка — счета и отчёт */
+.lists {
+  display: grid;
+  gap: 22px;
+}
+.zoneText {
+  margin-bottom: 6px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+.list {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: 2px solid var(--ink);
+}
+.list li {
+  display: grid;
+  gap: 2px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--rule-2);
+}
+.list b {
+  font-family: var(--f-display);
+  font-weight: 700;
+}
+.list span {
+  font-size: 0.875rem;
+  color: var(--ink-2);
+}
+.cost {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.cost i {
+  width: max(4px, calc(var(--w) * 160px));
+  height: 8px;
+  border-radius: 4px;
+  background: var(--blue);
+}
+.cost em {
+  font-style: normal;
+  font-weight: 800;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+
+/* появление: ленты вытягиваются слева направо */
+@media (scripting: enabled) and (prefers-reduced-motion: no-preference) {
+  .ribbonIn,
+  .ribbonOut {
+    opacity: 0;
+    transform: scaleX(0.2);
+    transition:
+      opacity 0.6s var(--ease-out),
+      transform 0.9s var(--ease-out);
+  }
+  .ribbonIn {
+    transition-delay: calc(var(--i) * 0.1s);
+  }
+  .ribbonOut {
+    transition-delay: calc(0.55s + var(--i) * 0.1s);
+  }
+  .in .ribbonIn,
+  .in .ribbonOut {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (max-width: 760px) {
+  .facts {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .calc {
+    animation: none;
+  }
+}

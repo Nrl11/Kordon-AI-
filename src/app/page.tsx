@@ -1,32 +1,53 @@
-import SmoothScroll from "@/components/SmoothScroll";
-import Nav from "@/components/Nav";
-import Footer from "@/components/Footer";
+import Link from "next/link";
 import Hero from "@/components/hero/Hero";
-import Problem from "@/components/problem/Problem";
+import Section from "@/components/site/Section";
 import Inside from "@/components/inside/Inside";
-import Rules from "@/components/rules/Rules";
-import EconomicsSection from "@/components/economics/EconomicsSection";
-import PricingSection from "@/components/pricing/PricingSection";
-import Path from "@/components/path/Path";
+import Portal from "@/components/home/Portal";
+import Architecture from "@/components/product/Architecture";
+import Team from "@/components/home/Team";
+import PilotCta from "@/components/home/PilotCta";
 
+/* Главная рассказывает о продукте целиком: защита, которая окупает себя,
+   портал, где видны все нейросети компании, как защищены данные, как
+   ставится и сколько экономит, кто делает — и поле для пилота в конце. */
 export default function Home() {
   return (
     <>
-      <a className="skip-link" href="#main">
-        Перейти к содержанию
-      </a>
-      <SmoothScroll />
-      <Nav />
-      <main id="main">
-        <Hero />
-        <Problem />
-        <Inside />
-        <Rules />
-        <EconomicsSection />
-        <PricingSection />
-        <Path />
-      </main>
-      <Footer />
+      <Hero />
+
+      <Section
+        id="control"
+        title="Все нейросети компании — в одном окне"
+        sub="Кто пользуется моделями, на каких условиях и сколько это стоит."
+        tone="soft"
+      >
+        <Portal />
+      </Section>
+
+      <Section
+        id="protect"
+        title="Персональные данные не уходят наружу"
+        sub="Кордон проверяет каждый запрос до того, как он уйдёт из компании."
+        aside={
+          <Link className="more" href="/security">
+            Как устроена защита <span aria-hidden="true">→</span>
+          </Link>
+        }
+      >
+        <Inside bare />
+      </Section>
+
+      <Section
+        id="deploy"
+        title="Ставится в ваш контур"
+        sub="И сразу снижает счёт за модели."
+        tone="soft"
+      >
+        <Architecture />
+      </Section>
+
+      <Team />
+      <PilotCta />
     </>
   );
 }
