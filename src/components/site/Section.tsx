@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import { cx } from "@/lib/css";
-import { typo } from "@/lib/typo";
+import { sub as subline } from "@/lib/typo";
 
 /* Блок страницы: заголовок, при необходимости одна строка под ним, сцена. */
 export default function Section({
@@ -26,7 +26,7 @@ export default function Section({
             <h2 id={`${id}-title`} className="h2">
               {title}
             </h2>
-            {sub && <p className="section-sub">{typo(sub)}</p>}
+            {sub && <p className="section-sub">{subline(sub)}</p>}
           </div>
           {aside}
         </div>

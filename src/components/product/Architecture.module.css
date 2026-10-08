@@ -2,7 +2,7 @@
   display: grid;
   grid-template-columns: minmax(0, 1.5fr) minmax(0, 0.62fr);
   align-items: stretch;
-  gap: clamp(24px, 3.4vw, 56px);
+  gap: clamp(20px, 2.6vw, 40px);
 }
 
 /* тёмное поле, на нём светлый остров компании */
@@ -14,7 +14,9 @@
   background:
     radial-gradient(70% 90% at 80% 50%, #1a2645 0%, transparent 70%),
     #111c33;
-  box-shadow: 0 50px 90px -60px rgba(11, 19, 36, 0.8);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.06),
+    0 50px 90px -60px rgba(11, 19, 36, 0.8);
 }
 .board svg {
   display: block;
@@ -25,11 +27,9 @@
 .island {
   fill: var(--paper);
 }
-.contour {
-  fill: none;
-  stroke: var(--ink);
-  stroke-width: 6;
-  stroke-linecap: round;
+/* проход в контуре — золотая метка там, где выходит канал */
+.gapMark {
+  fill: var(--gold);
 }
 .zone,
 .zoneDark {
@@ -46,8 +46,9 @@
 }
 .wire {
   fill: none;
-  stroke: var(--rule-2);
+  stroke: #d5dbe6;
   stroke-width: 2;
+  stroke-linejoin: round;
 }
 .wireOut {
   fill: none;
@@ -58,14 +59,38 @@
 .dot {
   fill: var(--gold);
 }
-.dotIn {
+/* потоки внутри контура */
+.flow {
+  fill: var(--ink);
+  stroke: var(--paper);
+  stroke-width: 2;
+  paint-order: stroke;
+}
+.flow[data-k="log"],
+.flow[data-k="local"] {
+  fill: var(--blue);
+}
+.flow[data-k="db"] {
+  fill: var(--ink-3);
+}
+.pill rect {
   fill: var(--ink);
 }
+.pill text {
+  font-size: 12px;
+  font-weight: 700;
+  fill: var(--gold-2);
+}
 
+/* блоки: белые с мягкой тенью, слева цветная метка типа */
 .box rect {
-  fill: var(--paper-2);
-  stroke: var(--rule-2);
+  fill: var(--paper);
+  stroke: var(--rule);
   stroke-width: 1.5;
+}
+.box .tick {
+  fill: var(--rule-2);
+  stroke: none;
 }
 .box text {
   font-size: 16px;
@@ -77,30 +102,39 @@
   font-weight: 500;
   fill: var(--ink-3);
 }
-.box[data-k="gate"] rect {
-  fill: var(--paper);
+.box[data-k="gate"] rect:first-child {
+  fill: #fffaf0;
   stroke: var(--gold);
-  stroke-width: 3;
+  stroke-width: 2.5;
+}
+.box[data-k="gate"] .tick {
+  fill: var(--gold);
 }
 .box[data-k="gate"] text:first-of-type {
   font-family: var(--f-display);
   font-size: 19px;
   font-weight: 800;
 }
-.box[data-k="local"] rect {
+.box[data-k="local"] rect:first-child {
   fill: var(--blue-soft);
   stroke: var(--blue-light);
+}
+.box[data-k="local"] .tick {
+  fill: var(--blue);
 }
 .box[data-k="local"] text:first-of-type {
   fill: var(--blue-ink);
 }
-.box[data-k="entry"] rect {
-  fill: var(--paper);
+.box[data-k="entry"] rect:first-child {
   stroke: var(--ink);
+}
+.box[data-k="entry"] .tick {
+  fill: var(--ink);
 }
 .ext rect {
   fill: rgba(255, 255, 255, 0.06);
-  stroke: rgba(255, 255, 255, 0.3);
+  stroke: rgba(224, 176, 74, 0.55);
+  stroke-width: 1.5;
 }
 .ext text {
   font-size: 15px;
@@ -117,29 +151,31 @@
   fill: var(--on-ink-2);
 }
 
-/* три факта: колонка растянута на высоту схемы, строки делят её поровну */
+/* три факта — одинаковые карточки; последняя, про экономию, золотая
+   и тянется до низа схемы */
 .facts {
-  display: grid;
-  align-content: space-between;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
   margin: 0;
   padding: 0;
   list-style: none;
-  border-top: 2px solid var(--ink);
 }
 .facts li {
   display: grid;
   align-content: center;
   justify-items: start;
   gap: 6px;
-  padding: clamp(12px, 2vh, 20px) 0;
-  border-bottom: 1px solid var(--rule-2);
-}
-.facts li:last-child {
-  border-bottom: 0;
+  padding: clamp(16px, 2.4vh, 22px) 22px;
+  border-radius: 20px;
+  background: var(--paper);
+  box-shadow:
+    0 0 0 1px var(--rule),
+    0 20px 40px -34px rgba(11, 19, 36, 0.4);
 }
 .facts b {
   font-family: var(--f-display);
-  font-size: clamp(1.15rem, 1rem + 0.45vw, 1.4rem);
+  font-size: clamp(1.1rem, 0.98rem + 0.4vw, 1.3rem);
   font-weight: 700;
   line-height: 1.15;
   letter-spacing: -0.02em;
@@ -150,19 +186,15 @@
 }
 /* экономия — золотая карточка с кнопкой в калькулятор */
 .facts .save {
+  flex: 1;
   gap: 10px;
-  margin-top: 6px;
-  padding: clamp(16px, 2.4vh, 22px) 20px;
-  border: 0;
-  border-radius: 20px;
-  background: linear-gradient(160deg, rgba(224, 176, 74, 0.22), rgba(224, 176, 74, 0.08));
-  box-shadow: inset 0 0 0 1.5px rgba(224, 176, 74, 0.7);
-}
-.facts .save b {
-  color: var(--ink);
-}
-.facts .save p {
-  color: var(--ink-2);
+  background:
+    radial-gradient(90% 90% at 100% 0%, rgba(224, 176, 74, 0.35), transparent 70%),
+    linear-gradient(160deg, rgba(224, 176, 74, 0.2), rgba(224, 176, 74, 0.06)),
+    var(--paper);
+  box-shadow:
+    inset 0 0 0 1.5px rgba(224, 176, 74, 0.7),
+    0 20px 40px -34px rgba(138, 98, 16, 0.6);
 }
 @media (max-width: 1000px) {
   .stage {
@@ -171,7 +203,7 @@
 }
 @media (prefers-reduced-motion: reduce) {
   .dot,
-  .dotIn {
+  .flow {
     display: none;
   }
 }

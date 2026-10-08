@@ -43,6 +43,80 @@
   transform-box: fill-box;
   transform-origin: left center;
 }
+
+/* наведение: своя лента ярче, остальные и их подписи — тише */
+.ribbonIn path:first-child,
+.ribbonOut path:first-child {
+  transition:
+    fill 0.3s,
+    opacity 0.3s;
+}
+.canvas[data-hover] .ribbonIn:not([data-hot]) path:first-child,
+.canvas[data-hover] .ribbonOut:not([data-hot]) path:first-child {
+  opacity: 0.35;
+}
+.ribbonIn[data-hot] path:first-child {
+  fill: rgba(11, 19, 36, 0.3);
+}
+.ribbonOut[data-hot] path:first-child {
+  fill: rgba(42, 71, 214, 0.5);
+}
+.canvas[data-hover] .label:not([data-hot]) {
+  opacity: 0.45;
+}
+.label[data-hot] b {
+  color: var(--ink);
+  text-decoration: underline 2px var(--gold);
+  text-underline-offset: 4px;
+}
+.label {
+  cursor: default;
+  border-radius: 8px;
+}
+.label:focus-visible {
+  outline: 2px solid var(--blue);
+  outline-offset: 6px;
+}
+
+/* подсказка над серединой ленты */
+.tip {
+  position: absolute;
+  z-index: 2;
+  display: grid;
+  gap: 2px;
+  padding: 10px 14px;
+  border-radius: 12px;
+  background: var(--ink);
+  color: #ffffff;
+  font-size: 0.8125rem;
+  line-height: 1.35;
+  white-space: nowrap;
+  pointer-events: none;
+  transform: translate(-50%, calc(-100% - 8px));
+  box-shadow: 0 18px 36px -18px rgba(11, 19, 36, 0.6);
+  animation: tipIn 0.18s var(--ease-out) both;
+}
+.tip b {
+  font-family: var(--f-display);
+  font-size: 0.9375rem;
+  font-weight: 700;
+}
+.tip span {
+  color: var(--on-ink-2);
+}
+.tip em {
+  margin-top: 2px;
+  font-style: normal;
+  font-weight: 800;
+  color: var(--gold-2);
+  font-variant-numeric: tabular-nums;
+}
+@keyframes tipIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, calc(-100% - 2px));
+  }
+}
 .center {
   fill: none;
   stroke: none;
@@ -279,7 +353,8 @@
   }
 }
 @media (prefers-reduced-motion: reduce) {
-  .calc {
+  .calc,
+  .tip {
     animation: none;
   }
 }

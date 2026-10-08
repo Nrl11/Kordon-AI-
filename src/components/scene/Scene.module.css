@@ -181,6 +181,16 @@
 .node[data-kind="local"] {
   box-shadow: inset 0 0 0 1px rgba(124, 147, 242, 0.45);
 }
+/* сверху вниз карточки узкие и ровные: текст по центру, без переносов */
+.canvas[data-vertical] .node {
+  justify-items: center;
+  padding: 8px 6px;
+  text-align: center;
+}
+.canvas[data-vertical] .node em {
+  font-size: 11px;
+  white-space: nowrap;
+}
 .node[data-dim] {
   opacity: 0.55;
 }

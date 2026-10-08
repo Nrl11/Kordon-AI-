@@ -2,12 +2,17 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import PageHead from "@/components/site/PageHead";
 import CtaBand from "@/components/site/CtaBand";
+import { pageMeta } from "@/lib/seo";
 import { nb } from "@/lib/typo";
 
-export const metadata: Metadata = {
-  title: "Решения",
-  description: "Кордон AI для ИТ-директора, службы информационной безопасности и финансового директора.",
-};
+export const metadata: Metadata = pageMeta({
+  path: "/solutions",
+  title: "Решения для ИТ, ИБ и финансов",
+  description:
+    "Как Кордон AI помогает ИТ-директору, службе ИБ и финансовому директору: один доступ ко всем моделям, журнал обращений и понятные расходы на нейросети.",
+  og: "solutions",
+  ogTitle: "Один шлюз — три задачи",
+});
 
 const ROLES = [
   {

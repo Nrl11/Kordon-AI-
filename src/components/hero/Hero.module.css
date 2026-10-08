@@ -101,6 +101,12 @@
   position: absolute;
   inset: 0;
   pointer-events: none;
+  /* до первого кадра подписи ещё не расставлены — не показываем их */
+  opacity: 0;
+  transition: opacity 0.6s var(--ease-out);
+}
+.labels[data-placed] {
+  opacity: 1;
 }
 .label {
   position: absolute;

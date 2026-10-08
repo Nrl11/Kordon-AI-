@@ -23,6 +23,8 @@ export interface RNode {
   sub?: string;
   note?: string;
   kind?: "local";
+  /** ширина карточки: у карточек одной колонки — одинаковая, края ровные */
+  width?: number;
 }
 
 export interface RGeo {
@@ -66,9 +68,9 @@ function outPath(n: RNode, g: RGeo) {
 
 function nodeStyle(n: RNode, vertical?: boolean) {
   if (vertical) {
-    return { left: n.x, top: n.y, transform: n.side === "src" ? "translate(-50%, -100%)" : "translate(-50%, 0)" };
+    return { left: n.x, top: n.y, width: n.width, transform: n.side === "src" ? "translate(-50%, -100%)" : "translate(-50%, 0)" };
   }
-  return { left: n.x, top: n.y, transform: n.side === "src" ? "translate(-100%, -50%)" : "translate(0, -50%)" };
+  return { left: n.x, top: n.y, width: n.width, transform: n.side === "src" ? "translate(-100%, -50%)" : "translate(0, -50%)" };
 }
 
 export default function Routes({
@@ -93,6 +95,8 @@ export default function Routes({
   const dot = useRef<SVGCircleElement>(null);
   const st = steps[i];
 
+  const vertical = !!g.vertical;
+
   useEffect(() => {
     const c = dot.current;
     const pin = paths.current[`hl-in-${st.from}`];
@@ -101,10 +105,13 @@ export default function Routes({
     const all = Object.entries(paths.current)
       .filter(([k, p]) => k.startsWith("hl-") && p)
       .map(([, p]) => p as SVGPathElement);
+    /* видны только линии этого шага: у остальных скругление концов рисует
+       «хвостики» в начале пути */
     all.forEach((p) => {
       const L = p.getTotalLength();
-      gsap.set(p, { strokeDasharray: L, strokeDashoffset: L, opacity: 1 });
+      gsap.set(p, { strokeDasharray: L, strokeDashoffset: L, opacity: p === pin || p === pout ? 1 : 0 });
     });
+    if (pout) pout.setAttribute("data-tone", st.tone);
     if (!inView || matches(REDUCED)) {
       /* без движения — итог шага сразу */
       gsap.set(pin, { strokeDashoffset: 0 });
@@ -119,23 +126,30 @@ export default function Routes({
       return () => cancelAnimationFrame(id);
     }
 
-    const run = (p: SVGPathElement, dur: number) => {
+    /* точка идёт по пути, линия прорисовывается следом */
+    const run = (p: SVGPathElement, dur: number, ease: string, from = 0, to = 1) => {
       const L = p.getTotalLength();
-      const o = { t: 0 };
+      const o = { t: from };
       return gsap.to(o, {
-        t: 1,
+        t: to,
         duration: dur,
-        ease: "power1.inOut",
+        ease,
         onUpdate: () => {
           const pt = p.getPointAtLength(o.t * L);
           c.setAttribute("cx", String(pt.x));
           c.setAttribute("cy", String(pt.y));
-          p.style.strokeDashoffset = String(L * (1 - o.t));
+          p.style.strokeDashoffset = String(L * (1 - Math.max(o.t, 0)));
         },
       });
     };
 
+    /* Один сплошной путь без скачков: запрос плавно трогается от карточки,
+       разгоняется, ныряет в знак и гаснет внутри; пока шлюз думает, его не
+       видно; затем выходит с другой стороны и тормозит у модели. Отказ —
+       упирается в знак и откатывается назад. */
     const start = pin.getPointAtLength(0);
+    const edge = pin.getPointAtLength(pin.getTotalLength());
+    const core = vertical ? { x: edge.x, y: edge.y + G } : { x: edge.x + G, y: edge.y };
     const tl = gsap.timeline({ onComplete: () => setI((x) => (x + 1) % steps.length) });
     tl.call(() => {
       setSrcOn(true);
@@ -144,39 +158,53 @@ export default function Routes({
       setDstOn(false);
       c.removeAttribute("data-tone");
     });
-    tl.set(c, { attr: { cx: start.x, cy: start.y, r: 6 }, opacity: 1 });
-    tl.add(run(pin, 1));
-    tl.call(() => setBusy(true));
-    tl.to({}, { duration: 0.55 });
-    tl.call(() => {
-      setBusy(false);
-      setVerdictOn(true);
-      c.setAttribute("data-tone", st.tone);
-    });
+    tl.set(c, { attr: { cx: start.x, cy: start.y, r: 0 }, opacity: 1 });
+    tl.to(c, { attr: { r: 6 }, duration: 0.25, ease: "power2.out" });
+    tl.add(run(pin, 1.05, "sine.in"), "-=0.1");
     if (pout) {
-      pout.setAttribute("data-tone", st.tone);
-      tl.add(run(pout, 0.95), "+=0.25");
+      tl.to(c, { attr: { cx: core.x, cy: core.y, r: 2 }, opacity: 0, duration: 0.2, ease: "power2.out" });
+      tl.call(() => setBusy(true));
+      tl.to({}, { duration: 0.45 });
+      tl.call(() => {
+        setBusy(false);
+        setVerdictOn(true);
+        c.setAttribute("data-tone", st.tone);
+      });
+      const exit = pout.getPointAtLength(0);
+      tl.to(c, { attr: { cx: exit.x, cy: exit.y, r: 6 }, opacity: 1, duration: 0.2, ease: "power2.in" });
+      tl.add(run(pout, 1, "sine.out"));
       tl.call(() => setDstOn(true));
     } else {
-      /* запрос остановлен на шлюзе */
-      tl.to(c, { attr: { r: 10 }, duration: 0.18, yoyo: true, repeat: 1 }, "+=0.1");
+      tl.call(() => setBusy(true));
+      tl.to({}, { duration: 0.45 });
+      tl.call(() => {
+        setBusy(false);
+        setVerdictOn(true);
+        c.setAttribute("data-tone", st.tone);
+      });
+      /* отказ: откат назад по своему пути */
+      const back = pin.getPointAtLength(pin.getTotalLength() * 0.86);
+      tl.to(c, { attr: { cx: back.x, cy: back.y }, duration: 0.45, ease: "power3.out" });
     }
     tl.to({}, { duration: 1.9 });
-    tl.to([c, ...all], { opacity: 0, duration: 0.35 });
+    /* подпись и подсветка гаснут вместе с линией и до смены шага —
+       иначе на миг проступает надпись следующего запроса */
     tl.call(() => {
       setSrcOn(false);
       setVerdictOn(false);
       setDstOn(false);
     });
+    tl.to([c, pin, ...(pout ? [pout] : [])], { opacity: 0, duration: 0.35 });
+    tl.to({}, { duration: 0.3 });
     return () => {
       tl.kill();
     };
-  }, [i, inView, st, steps.length, width]);
+  }, [i, inView, st, steps.length, width, vertical]);
 
   return (
     <div ref={ref}>
       <div ref={box} className={styles.stage}>
-        <div className={styles.canvas} style={{ width: g.w, height: g.h }} aria-hidden="true">
+        <div className={styles.canvas} data-vertical={g.vertical || undefined} style={{ width: g.w, height: g.h }} aria-hidden="true">
           <svg className={styles.svg} width={g.w} height={g.h} viewBox={`0 0 ${g.w} ${g.h}`}>
             {g.zones?.map((z) => (
               <g key={z.label}>

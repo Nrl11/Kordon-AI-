@@ -6,12 +6,16 @@ import Pricing from "@/components/pricing/Pricing";
 import Included from "@/components/pricing/Included";
 import Growth from "@/components/pricing/Growth";
 import ServiceTrack from "@/components/pricing/ServiceTrack";
+import { pageMeta } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "Стоимость",
+export const metadata: Metadata = pageMeta({
+  path: "/pricing",
+  title: "Стоимость лицензии ИИ-шлюза",
   description:
-    "Как устроена лицензия Кордон AI: ступень по числу потребителей ИИ, база и модули, запас 10 %, сверка раз в год, цена на три года, бессрочная лицензия для CAPEX.",
-};
+    "Лицензия Кордон AI считается по числу потребителей ИИ: база и модули, запас 10 % без доплаты, цена на три года и бессрочная лицензия для CAPEX.",
+  og: "pricing",
+  ogTitle: "Цена — по числу потребителей ИИ",
+});
 
 const FAQ = [
   {

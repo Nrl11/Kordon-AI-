@@ -1,0 +1,183 @@
+/* Юридическая страница: оглавление слева держится на месте, текст справа —
+   узкой колонкой для чтения (65–75 знаков), спокойная иерархия h2/h3. */
+
+/* текст сразу под шапкой страницы */
+.body.body {
+  padding-top: clamp(8px, 2vh, 24px);
+}
+
+.meta {
+  margin-top: 14px;
+  font-size: 0.875rem;
+  color: var(--ink-3);
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: 260px minmax(0, 1fr);
+  align-items: start;
+  gap: clamp(32px, 6vw, 96px);
+}
+
+.toc {
+  position: sticky;
+  top: calc(var(--nav-h) + 24px);
+  padding-top: 6px;
+  border-top: 2px solid var(--ink);
+}
+.toc p {
+  padding: 14px 0 8px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+.toc ol {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.toc a {
+  display: block;
+  padding: 7px 0;
+  font-size: 0.9375rem;
+  line-height: 1.35;
+  color: var(--ink-2);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+.toc a:hover {
+  color: var(--ink);
+}
+.toc a:focus-visible {
+  outline: 2px solid var(--blue);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+.doc {
+  max-width: 70ch;
+}
+.doc section {
+  padding-top: clamp(28px, 4vh, 40px);
+  scroll-margin-top: calc(var(--nav-h) + 16px);
+}
+.doc section:first-child {
+  padding-top: 0;
+}
+.doc section + section {
+  margin-top: clamp(28px, 4vh, 40px);
+  border-top: 1px solid var(--rule);
+}
+.doc h2 {
+  font-family: var(--f-display);
+  font-size: clamp(1.4rem, 1.15rem + 0.7vw, 1.8rem);
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: -0.025em;
+}
+.doc h3 {
+  margin-top: 22px;
+  font-size: 1.0625rem;
+  font-weight: 700;
+}
+.doc p,
+.doc li,
+.doc dd {
+  font-size: 1.0625rem;
+  line-height: 1.65;
+  color: var(--ink-2);
+  text-wrap: pretty;
+}
+.doc p {
+  margin-top: 14px;
+}
+.doc h3 + p,
+.doc h3 + ul {
+  margin-top: 8px;
+}
+.doc ul {
+  display: grid;
+  gap: 6px;
+  margin: 14px 0 0;
+  padding: 0;
+  list-style: none;
+}
+.doc li {
+  position: relative;
+  padding-left: 26px;
+}
+/* золотая чёрточка вместо точки списка */
+.doc li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.82em;
+  width: 12px;
+  height: 2px;
+  border-radius: 1px;
+  background: var(--gold);
+}
+
+.terms {
+  display: grid;
+  grid-template-columns: minmax(0, 200px) minmax(0, 1fr);
+  gap: 12px 24px;
+  margin: 18px 0 0;
+}
+.terms dt {
+  font-weight: 700;
+  color: var(--ink);
+  line-height: 1.65;
+}
+.terms dd {
+  margin: 0;
+}
+
+.card {
+  display: grid;
+  gap: 6px;
+  margin-top: 18px;
+  padding: 22px 24px;
+  border-radius: 18px;
+  background: var(--paper-2);
+  font-style: normal;
+  font-size: 1.0625rem;
+  line-height: 1.5;
+  color: var(--ink-2);
+}
+.card b {
+  color: var(--ink);
+}
+.card a {
+  justify-self: start;
+  color: var(--blue-ink);
+  font-weight: 600;
+}
+
+@media (max-width: 1000px) {
+  .layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .toc {
+    position: static;
+  }
+  .toc ol {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 24px;
+  }
+}
+@media (max-width: 600px) {
+  .toc ol {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .terms {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 2px;
+  }
+  .terms dd {
+    margin-bottom: 10px;
+  }
+}

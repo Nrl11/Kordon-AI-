@@ -1,0 +1,82 @@
+/* компактная тёмная карточка слева внизу: две строки текста и кнопки,
+   на первом экране встаёт под кнопками и не закрывает схему */
+.banner {
+  position: fixed;
+  left: 24px;
+  bottom: 20px;
+  z-index: 60;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  width: min(500px, calc(100vw - 32px));
+  padding: 14px 14px 14px 20px;
+  border-radius: 20px;
+  background: var(--ink);
+  color: var(--on-ink);
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.08),
+    0 24px 50px -24px rgba(11, 19, 36, 0.6);
+  animation: up 0.45s var(--ease-out) 0.6s both;
+}
+.banner p {
+  flex: 1 1 100%;
+  font-size: 0.875rem;
+  line-height: 1.45;
+  color: var(--on-ink-2);
+}
+.banner a {
+  color: #ffffff;
+  text-decoration: underline;
+  text-decoration-color: rgba(255, 255, 255, 0.35);
+  text-underline-offset: 3px;
+  white-space: nowrap;
+}
+.banner a:hover {
+  text-decoration-color: #ffffff;
+}
+.actions {
+  display: flex;
+  flex: 1 1 100%;
+  justify-content: flex-end;
+  gap: 8px;
+}
+/* на тёмном фоне «только необходимые» — прозрачная со светлым контуром */
+.actions :global(.btn-line) {
+  border-color: rgba(255, 255, 255, 0.4);
+  background: transparent;
+  color: #ffffff;
+}
+.actions :global(.btn-line):hover {
+  border-color: #ffffff;
+  background: rgba(255, 255, 255, 0.08);
+  color: #ffffff;
+}
+.actions :global(.btn):focus-visible,
+.banner a:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
+}
+@keyframes up {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+}
+
+@media (max-width: 720px) {
+  .banner {
+    left: 16px;
+    bottom: 16px;
+    padding: 14px;
+  }
+  .actions :global(.btn) {
+    flex: 1;
+    padding-inline: 12px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .banner {
+    animation: none;
+  }
+}

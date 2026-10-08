@@ -2,20 +2,23 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import PageHead from "@/components/site/PageHead";
 import Section from "@/components/site/Section";
-import CtaBand from "@/components/site/CtaBand";
 import Reveal from "@/components/ui/Reveal";
 import VendorCard from "@/components/about/VendorCard";
 import Leaders from "@/components/about/Leaders";
 import Clients from "@/components/about/Clients";
 import { vars } from "@/lib/css";
+import { pageMeta } from "@/lib/seo";
 import { nb } from "@/lib/typo";
 import styles from "@/components/about/About.module.css";
 
-export const metadata: Metadata = {
-  title: "О компании",
+export const metadata: Metadata = pageMeta({
+  path: "/about",
+  title: "О компании Вебпрактик — разработчике Кордон AI",
   description:
-    "Кордон AI разрабатывает Вебпрактик — digital-интегратор с 2011 года: 130+ специалистов, 300+ проектов, лицензии ФСТЭК и ФСБ. Направление Вебпрактик AI внедряет ИИ-агентов в крупных компаниях.",
-};
+    "Кордон AI разрабатывает Вебпрактик: с 2011 года, 130+ специалистов, 300+ проектов, лицензии ФСТЭК и ФСБ. Вебпрактик AI внедряет ИИ в крупных компаниях.",
+  og: "about",
+  ogTitle: "Мы — команда Вебпрактик",
+});
 
 const AI_WORK = [
   { tag: "До старта", b: "Аудит и архитектура", s: "Находим процессы, где ИИ окупится, и проектируем, как он встроится." },
@@ -26,11 +29,12 @@ const AI_WORK = [
   { tag: "Запуск", b: "Обучение", s: "Сотрудники учатся работать с ИИ, изменения закрепляются." },
 ];
 
+/* по блоку наград на webpractik.ru и рейтингу Рунета 2026 */
 const AWARDS = [
-  { what: "Внедрение ИИ для финтеха", where: "Рейтинг Рунета", year: "2025" },
-  { what: "Комплексное агентство для финтеха", where: "Рейтинг Рунета", year: "2025" },
-  { what: "Разработка и продвижение сайтов банков", where: "Рейтинг Рунета", year: "2025" },
-  { what: "SEO-агентство года", where: "Ruward Award", year: "2026" },
+  { place: 1, what: "Внедрение ИИ для финтеха", where: "Рейтинг Рунета", year: "2025" },
+  { place: 1, what: "ИИ-разработка и внедрения для госструктур", where: "Рейтинг Рунета", year: "2026" },
+  { place: 1, what: "Комплексное агентство для финтеха", where: "Рейтинг Рунета", year: "2025" },
+  { place: 1, what: "Разработка и продвижение сайтов банков", where: "Рейтинг Рунета", year: "2025" },
 ];
 
 const RUBRICS = ["Разборы внедрений", "Стек и архитектура", "Исследования рынка", "On-premise и безопасность"];
@@ -98,9 +102,10 @@ export default function AboutPage() {
           {AWARDS.map((a, i) => (
             <article key={a.what} data-reveal="" style={vars({ "--i": i })}>
               <b className={styles.place}>
-                <small>№</small>1
+                <small>№</small>
+                {a.place}
               </b>
-              <p>{nb(a.what)}</p>
+              <h3>{nb(a.what)}</h3>
               <span>
                 {a.where}, {a.year}
               </span>
@@ -109,29 +114,34 @@ export default function AboutPage() {
         </Reveal>
       </Section>
 
-      <section className="section" aria-labelledby="channel-title">
+      {/* последний шаг страницы — к Вебпрактик AI: проект или канал */}
+      <section className="section" aria-labelledby="wpai-title">
         <div className="wrap">
           <div className={styles.channel}>
-            <div>
-              <h2 id="channel-title">Корпоративный ИИ без воды</h2>
-              <p>{nb("Наш канал о том, как крупные компании внедряют ИИ: разборы проектов, стек, исследования и безопасность.")}</p>
-              <a className="btn btn-gold" href="https://t.me/Webpractik_Ai" target="_blank" rel="noopener noreferrer">
-                Читать @Webpractik_Ai <span className="arr" aria-hidden="true">→</span>
+            <div className={styles.wpai}>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img className={styles.wpaiLogo} src="/clients/webpractik-ai.svg" alt="Вебпрактик AI" width={190} height={27} />
+              <h2 id="wpai-title">{"Нужен ИИ не только в шлюзе?"}</h2>
+              <p>{nb("Вебпрактик AI внедряет ИИ в крупных компаниях — от аудита процессов до агентов, которые работают в закрытом контуре")}</p>
+              <a className="btn btn-gold" href="https://webpractik.ai" target="_blank" rel="noopener noreferrer">
+                Перейти на webpractik.ai <span className="arr" aria-hidden="true">→</span>
               </a>
             </div>
-            <ul className={styles.rubrics} aria-label="О чём пишем">
-              {RUBRICS.map((r) => (
-                <li key={r}>{r}</li>
-              ))}
-            </ul>
+            <div className={styles.feed}>
+              <small>Канал Вебпрактик AI</small>
+              <b>Корпоративный ИИ без воды</b>
+              <ul className={styles.rubrics} aria-label="О чём пишем">
+                {RUBRICS.map((r) => (
+                  <li key={r}>{r}</li>
+                ))}
+              </ul>
+              <a className={styles.feedLink} href="https://t.me/Webpractik_Ai" target="_blank" rel="noopener noreferrer">
+                Читать @Webpractik_Ai <span aria-hidden="true">→</span>
+              </a>
+            </div>
           </div>
         </div>
       </section>
-
-      <CtaBand
-        title="Покажем Кордон на ваших данных"
-        text="Наш инженер и архитектор разберут, как у вас подключены модели, и поднимут стенд."
-      />
     </>
   );
 }

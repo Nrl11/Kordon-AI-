@@ -1,19 +1,20 @@
-import { STATS } from "@/lib/stats";
+import { STATS, starOf } from "@/lib/stats";
 import styles from "./RiskStats.module.css";
 
-/* Три цифры из исследований — одной строкой под сценой утечки. */
+/* Три цифры из исследований. Источник — звёздочкой у цифры, сама ссылка —
+   в сносках подвала. */
 export default function RiskStats() {
   return (
     <div className={styles.stats}>
-      {STATS.map((s) => (
+      {STATS.map((s, i) => (
         <figure key={s.source} className={styles.stat}>
-          <b>{s.value}</b>
-          <figcaption>
-            {s.caption}
-            <a href={s.href} target="_blank" rel="noopener noreferrer">
-              {s.source}
+          <b>
+            {s.value}
+            <a className={styles.star} href={`#src-${i + 1}`} aria-label={`Источник: ${s.source}`}>
+              {starOf(i)}
             </a>
-          </figcaption>
+          </b>
+          <figcaption>{s.caption}</figcaption>
         </figure>
       ))}
     </div>

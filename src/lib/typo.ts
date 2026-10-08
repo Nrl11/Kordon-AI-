@@ -16,3 +16,7 @@ export function nb(s: string) {
 }
 
 export const typo = (n: ReactNode) => (typeof n === "string" ? nb(n) : n);
+
+/* подзаголовок под h1/h2: без точки в конце (многоточие оставляем) */
+export const noDot = (s: string) => s.replace(/(?<!\.)\.\s*$/, "");
+export const sub = (n: ReactNode) => (typeof n === "string" ? nb(noDot(n)) : n);

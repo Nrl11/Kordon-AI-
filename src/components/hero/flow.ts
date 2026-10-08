@@ -41,7 +41,7 @@ export type Phase = "go" | "core" | "out" | "done";
 
 /* длительности шагов одного запроса, секунды:
    подлёт к ядру, проход сквозь ядро, путь к модели, пауза, перерыв */
-export const T = { in: 1.35, core: 1.15, out: 1.25, hold: 1.5, gap: 0.4 };
+export const T = { in: 1.35, core: 1.15, out: 1.25, hold: 2.1, gap: 0.4 };
 export const STORY_LEN = T.in + T.core + T.out + T.hold + T.gap;
 
 export const destName = (d: Dest) => (typeof d === "number" ? MODELS[d] : d === "local" ? "Локальная модель" : null);

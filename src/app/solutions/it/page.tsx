@@ -7,12 +7,16 @@ import Uptime from "@/components/it/Uptime";
 import KeyRoutes from "@/components/it/KeyRoutes";
 import Scenarios from "@/components/it/Scenarios";
 import AgentRun from "@/components/it/AgentRun";
+import { pageMeta } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "Для ИТ",
+export const metadata: Metadata = pageMeta({
+  path: "/solutions/it",
+  title: "ИИ-шлюз для ИТ: один API ко всем моделям",
   description:
-    "Кордон AI для ИТ-директора и DevOps: один адрес для всех моделей и резервная модель при сбое провайдера, личные ключи с правилами и лимитами, отзыв доступа через каталог, доступ агентов к системам по ролям.",
-};
+    "Один адрес для всех нейросетей, резервная модель при сбое провайдера, личные ключи с лимитами и доступ ИИ-агентов к системам по ролям — в вашем контуре.",
+  og: "it",
+  ogTitle: "Одна точка для всех моделей",
+});
 
 const KEY_RULES = [
   "какие модели: все, только дешёвые или только локальные",

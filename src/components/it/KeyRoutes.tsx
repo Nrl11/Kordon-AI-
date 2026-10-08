@@ -49,25 +49,69 @@ const STEPS: RStep[] = [
   },
 ];
 
+/* ширина карточек ключей и моделей — у каждой колонки своя, общая */
+const SRC_W = 200;
+const DST_W = 178;
+
 function build(w: number): RGeo {
-  if (w < 560) {
-    const h = 400;
+  if (w < 640) {
+    /* сверху вниз: карточки ровными рядами одной ширины */
+    const h = 374;
     const gate = { x: w / 2, y: 196 };
+    const sw = Math.floor((w - 24 - 18) / 4);
+    const dw = Math.floor((w - 24 - 20) / 3);
     const nodes: RNode[] = [
-      ...KEYS.map((k, i) => ({ id: k.id, side: "src" as const, x: w * (0.14 + i * 0.24), y: 84, title: k.short, note: k.note })),
-      ...MODELS.map((m, i) => ({ id: m.id, side: "dst" as const, x: w * (0.18 + i * 0.32), y: 312, title: m.short, kind: m.kind })),
+      ...KEYS.map((k, i) => ({
+        id: k.id,
+        side: "src" as const,
+        x: 12 + sw / 2 + i * (sw + 6),
+        y: 84,
+        width: sw,
+        title: k.short,
+        note: k.note,
+      })),
+      ...MODELS.map((m, i) => ({
+        id: m.id,
+        side: "dst" as const,
+        x: 12 + dw / 2 + i * (dw + 10),
+        y: 312,
+        width: dw,
+        title: m.short,
+        kind: m.kind,
+      })),
     ];
     return { w, h, vertical: true, gate, verdict: { x: w / 2, y: 236 }, nodes };
   }
-  const h = 392;
-  const gx = Math.round(w * 0.52);
-  const gate = { x: gx, y: 196 };
-  const reach = Math.min(160, gx - 222);
+  /* схема по центру карточки: ключи — ровной колонкой слева, модели —
+     справа, решение шлюза — под знаком, ниже всех линий */
+  const h = 380;
+  const reach = Math.max(110, Math.min(190, (w - 56 - SRC_W - DST_W) / 2));
+  const left = (w - (SRC_W + reach * 2 + DST_W)) / 2;
+  const gx = Math.round(left + SRC_W + reach);
+  const gate = { x: gx, y: 188 };
   const nodes: RNode[] = [
-    ...KEYS.map((k, i) => ({ id: k.id, side: "src" as const, x: gx - reach, y: 64 + i * 88, title: k.title, sub: k.sub, note: k.note })),
-    ...MODELS.map((m, i) => ({ id: m.id, side: "dst" as const, x: gx + reach - 20, y: 108 + i * 88, title: m.title, sub: m.sub, kind: m.kind })),
+    ...KEYS.map((k, i) => ({
+      id: k.id,
+      side: "src" as const,
+      x: gx - reach,
+      y: 56 + i * 88,
+      width: SRC_W,
+      title: k.title,
+      sub: k.sub,
+      note: k.note,
+    })),
+    ...MODELS.map((m, i) => ({
+      id: m.id,
+      side: "dst" as const,
+      x: gx + reach,
+      y: 100 + i * 88,
+      width: DST_W,
+      title: m.title,
+      sub: m.sub,
+      kind: m.kind,
+    })),
   ];
-  return { w, h, gate, verdict: { x: gx, y: 236 }, nodes };
+  return { w, h, gate, verdict: { x: gx, y: 338 }, nodes };
 }
 
 export default function KeyRoutes() {

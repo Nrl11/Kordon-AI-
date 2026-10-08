@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { CTA, FOOTER } from "@/lib/site";
 import { Logo } from "./Logo";
+import PageNotes from "./PageNotes";
+import ConsentLink from "./ConsentLink";
 import styles from "./Footer.module.css";
 
 export default function Footer() {
@@ -34,8 +36,13 @@ export default function Footer() {
             </div>
           ))}
         </nav>
+        <PageNotes />
         <div className={styles.legal}>
-          <span>© 2026 Вебпрактик</span>
+          <span>© 2026 ООО «Вебпрактик»</span>
+          <span className={styles.legalLinks}>
+            <Link href="/privacy">Политика ПДн</Link>
+            <ConsentLink className={styles.legalBtn} />
+          </span>
           <span>Кордон AI — корпоративный ИИ-шлюз в вашем контуре</span>
         </div>
       </div>

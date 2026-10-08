@@ -13,30 +13,34 @@ import styles from "./SpendFlow.module.css";
    отправляет каждую задачу в подходящую модель и считает её стоимость:
    токены × цена модели. Справа у каждой модели — рубли. Видно главное:
    толстый поток простых задач стоит немного, тонкий поток сложных —
-   большую часть счёта. Точка показывает, как посчитан один запрос. */
+   большую часть счёта. Точка показывает, как посчитан один запрос.
+   На ленту можно навести (или встать на подпись с клавиатуры): она
+   подсвечивается, остальные приглушаются, рядом — цифры этой ленты. */
 
 const TASKS = [
-  { id: "simple", title: "Простые задачи", sub: "58 % объёма", t: 520 },
-  { id: "normal", title: "Обычные задачи", sub: "33 % объёма", t: 300 },
-  { id: "hard", title: "Сложные задачи", sub: "9 % объёма", t: 80 },
+  { id: "simple", title: "Простые задачи", sub: "58 % объёма", t: 520, bill: 13, hint: "переводы, письма, пересказы" },
+  { id: "normal", title: "Обычные задачи", sub: "33 % объёма", t: 300, bill: 48, hint: "ответы по базе знаний, отчёты" },
+  { id: "hard", title: "Сложные задачи", sub: "9 % объёма", t: 80, bill: 39, hint: "код, финмодели, анализ" },
 ];
 const MODELS = [
   { id: "lite", title: "YandexGPT Lite", sub: "быстрая и дешёвая", t: 330, rub: 27_900 },
   { id: "local", title: "Qwen в контуре", sub: "своё железо", t: 140, rub: 0 },
   { id: "giga", title: "GigaChat Max", sub: "русский язык", t: 230, rub: 64_300 },
-  { id: "claude", title: "Claude Sonnet 5.5", sub: "код и анализ", t: 140, rub: 142_700 },
-  { id: "gpt", title: "GPT-6 Astra", sub: "самые сложные", t: 60, rub: 186_400 },
+  { id: "claude", title: "Claude Sonnet 5.5", sub: "код и сложный анализ", t: 200, rub: 329_100 },
 ];
 const TOTAL = MODELS.reduce((s, m) => s + m.rub, 0); // 421 300 ₽
 const MAX = Math.max(...MODELS.map((m) => m.rub));
+const pct = (rub: number) => Math.round((rub / TOTAL) * 100);
 
 /* как посчитан один запрос */
 const EXAMPLES = [
   { task: "simple", model: "lite", who: "А. Ершова, юристы", what: "«перескажи договор» · 2 300 токенов", rub: "0,19 ₽" },
   { task: "hard", model: "claude", who: "CI-пайплайн, разработка", what: "ревью кода · 8 400 токенов", rub: "6,20 ₽" },
   { task: "normal", model: "local", who: "Бот поддержки", what: "ответ по базе знаний · 1 900 токенов", rub: "0 ₽" },
-  { task: "hard", model: "gpt", who: "О. Смирнова, финансы", what: "финмодель на 2027 · 12 600 токенов", rub: "14,80 ₽" },
+  { task: "normal", model: "giga", who: "О. Смирнова, закупки", what: "письмо поставщику · 3 100 токенов", rub: "0,86 ₽" },
 ];
+
+type Hot = { side: "in" | "out"; id: string } | null;
 
 /* подписи не должны налезать друг на друга: раздвигаем центры на min */
 function spread(ys: number[], min: number, top: number, bottom: number) {
@@ -86,17 +90,30 @@ function geometry(w: number) {
     const m = (x1 + x2) / 2;
     return `M${x1},${y1} C${m},${y1} ${m},${y2} ${x2},${y2}`;
   };
+  /* у каждой ленты — середина: туда встаёт подсказка при наведении */
   let gy = gateY;
   const ins = left.map((n) => {
     const a2 = gy;
     gy += n.h;
-    return { id: n.id, d: ribbon(L + 8, n.y, n.y + n.h, G - 6, a2, gy), c: center(L + 8, n.y + n.h / 2, G - 6, (a2 + gy) / 2) };
+    return {
+      id: n.id,
+      d: ribbon(L + 8, n.y, n.y + n.h, G - 6, a2, gy),
+      c: center(L + 8, n.y + n.h / 2, G - 6, (a2 + gy) / 2),
+      mx: (L + 8 + G - 6) / 2,
+      my: (n.y + n.h / 2 + (a2 + gy) / 2) / 2 - n.h * 0.25,
+    };
   });
   gy = gateY;
   const outs = right.map((n) => {
     const a1 = gy;
     gy += n.h;
-    return { id: n.id, d: ribbon(G + 6, a1, gy, R, n.y, n.y + n.h), c: center(G + 6, (a1 + gy) / 2, R, n.y + n.h / 2) };
+    return {
+      id: n.id,
+      d: ribbon(G + 6, a1, gy, R, n.y, n.y + n.h),
+      c: center(G + 6, (a1 + gy) / 2, R, n.y + n.h / 2),
+      mx: (G + 6 + R) / 2,
+      my: ((a1 + gy) / 2 + n.y + n.h / 2) / 2 - n.h * 0.25,
+    };
   });
   const ly = spread(left.map((n) => n.y + n.h / 2), 52, 70, top + usable);
   const ry = spread(right.map((n) => n.y + n.h / 2), 52, 70, top + usable + 20);
@@ -114,6 +131,21 @@ export default function SpendFlow() {
   const ex = EXAMPLES[n];
   const dot = useRef<SVGCircleElement>(null);
   const paths = useRef<Record<string, SVGPathElement | null>>({});
+  /* лента под курсором или в фокусе: пока на неё смотрят, пример замирает */
+  const [hot, setHot] = useState<Hot>(null);
+  const tlRef = useRef<gsap.core.Timeline | null>(null);
+  const isHot = (side: "in" | "out", id: string) => hot?.side === side && hot.id === id;
+  const point = (side: "in" | "out", id: string) => ({
+    onMouseEnter: () => setHot({ side, id }),
+    onMouseLeave: () => setHot(null),
+  });
+
+  useEffect(() => {
+    const tl = tlRef.current;
+    if (!tl) return;
+    if (hot) tl.pause();
+    else tl.resume();
+  }, [hot]);
 
   useEffect(() => {
     const c = dot.current;
@@ -143,6 +175,7 @@ export default function SpendFlow() {
     const s = a.getPointAtLength(0);
     const gb = b.getPointAtLength(0);
     const tl = gsap.timeline({ onComplete: () => setN((x) => (x + 1) % EXAMPLES.length) });
+    tlRef.current = tl;
     tl.call(() => setAt("task"));
     tl.set(c, { attr: { cx: s.x, cy: s.y }, opacity: 0 });
     tl.to(c, { opacity: 1, duration: 0.25 });
@@ -156,14 +189,36 @@ export default function SpendFlow() {
     tl.to(c, { opacity: 0, duration: 0.3 });
     return () => {
       tl.kill();
+      tlRef.current = null;
     };
   }, [n, inView, wide, ex.task, ex.model, width]);
+
+  /* подсказка к ленте под курсором */
+  const tip = (() => {
+    if (!hot || !wide) return null;
+    if (hot.side === "in") {
+      const r = g.ins.find((x) => x.id === hot.id);
+      const t = TASKS.find((x) => x.id === hot.id);
+      if (!r || !t) return null;
+      return { x: r.mx, y: r.my, title: t.title, note: t.hint, value: `${t.sub} · ${t.bill} % счёта` };
+    }
+    const r = g.outs.find((x) => x.id === hot.id);
+    const m = MODELS.find((x) => x.id === hot.id);
+    if (!r || !m) return null;
+    return {
+      x: r.mx,
+      y: r.my,
+      title: m.title,
+      note: `${m.t} млн токенов за месяц`,
+      value: `${num(m.rub)} ₽ · ${pct(m.rub)} % счёта`,
+    };
+  })();
 
   return (
     <div ref={ref} className={cx(styles.flow, inView && styles.in)}>
       <div ref={box} className={styles.box}>
         {wide ? (
-          <div className={styles.canvas} style={{ height: g.h }}>
+          <div className={styles.canvas} style={{ height: g.h }} data-hover={hot ? "" : undefined}>
             <svg className={styles.svg} width={g.w} height={g.h} viewBox={`0 0 ${g.w} ${g.h}`} aria-hidden="true">
               <text className={styles.zone} x={g.L} y={26} textAnchor="end">
                 Задачи
@@ -173,7 +228,14 @@ export default function SpendFlow() {
               </text>
 
               {g.ins.map((r, i) => (
-                <g key={r.id} className={styles.ribbonIn} data-on={(r.id === ex.task && at !== "model") || undefined} style={vars({ "--i": i })}>
+                <g
+                  key={r.id}
+                  className={styles.ribbonIn}
+                  data-on={(!hot && r.id === ex.task && at !== "model") || undefined}
+                  data-hot={isHot("in", r.id) || undefined}
+                  style={vars({ "--i": i })}
+                  {...point("in", r.id)}
+                >
                   <path d={r.d} />
                   <path
                     ref={(el) => {
@@ -185,7 +247,14 @@ export default function SpendFlow() {
                 </g>
               ))}
               {g.outs.map((r, i) => (
-                <g key={r.id} className={styles.ribbonOut} data-on={(r.id === ex.model && at === "model") || undefined} style={vars({ "--i": i })}>
+                <g
+                  key={r.id}
+                  className={styles.ribbonOut}
+                  data-on={(!hot && r.id === ex.model && at === "model") || undefined}
+                  data-hot={isHot("out", r.id) || undefined}
+                  style={vars({ "--i": i })}
+                  {...point("out", r.id)}
+                >
                   <path d={r.d} />
                   <path
                     ref={(el) => {
@@ -217,8 +286,14 @@ export default function SpendFlow() {
               <div
                 key={s.id}
                 className={styles.label}
-                data-on={(s.id === ex.task && at !== "model") || undefined}
+                data-on={(!hot && s.id === ex.task && at !== "model") || undefined}
+                data-hot={isHot("in", s.id) || undefined}
                 style={{ left: 0, width: g.L - 14, top: g.ly[k] }}
+                tabIndex={0}
+                aria-label={`${s.title}: ${s.sub}, ${s.bill} % счёта`}
+                {...point("in", s.id)}
+                onFocus={() => setHot({ side: "in", id: s.id })}
+                onBlur={() => setHot(null)}
               >
                 <b>{s.title}</b>
                 <span>{s.sub}</span>
@@ -229,8 +304,14 @@ export default function SpendFlow() {
               <div
                 key={m.id}
                 className={cx(styles.label, styles.team)}
-                data-on={(m.id === ex.model && at === "model") || undefined}
+                data-on={(!hot && m.id === ex.model && at === "model") || undefined}
+                data-hot={isHot("out", m.id) || undefined}
                 style={{ left: g.R + 20, top: g.ry[k] }}
+                tabIndex={0}
+                aria-label={`${m.title}: ${m.t} млн токенов, ${num(m.rub)} ₽, ${pct(m.rub)} % счёта`}
+                {...point("out", m.id)}
+                onFocus={() => setHot({ side: "out", id: m.id })}
+                onBlur={() => setHot(null)}
               >
                 <b>{m.title}</b>
                 <span className={styles.cost}>
@@ -239,6 +320,14 @@ export default function SpendFlow() {
                 </span>
               </div>
             ))}
+
+            {tip && (
+              <div key={`${hot?.side}-${hot?.id}`} className={styles.tip} style={{ left: tip.x, top: tip.y }} aria-hidden="true">
+                <b>{tip.title}</b>
+                <span>{tip.note}</span>
+                <em>{tip.value}</em>
+              </div>
+            )}
           </div>
         ) : (
           <ul className={styles.list}>

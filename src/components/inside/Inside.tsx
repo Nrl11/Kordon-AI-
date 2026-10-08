@@ -81,6 +81,8 @@ function relayout(box: HTMLElement, tiles: HTMLElement[], change: () => void, du
     /* старая строка (снимок) гаснет на своём месте, новая проявляется поверх —
        слова не пролетают сквозь соседей и не наезжают друг на друга */
     ghost.setAttribute("aria-hidden", "true");
+    /* метка, чтобы снимок можно было убрать, если сцену прервали */
+    ghost.dataset.ghost = "";
     Object.assign(ghost.style, {
       position: "absolute",
       left: `${box.offsetLeft}px`,
@@ -115,14 +117,32 @@ export default function Inside({ bare = false }: { bare?: boolean }) {
   const scanRef = useRef<HTMLSpanElement>(null);
   const routeRef = useRef<HTMLDivElement>(null);
   const tlRef = useRef<gsap.core.Timeline | null>(null);
-  const live = useRef({ visible: false, paused: false });
+  const live = useRef({ visible: false, paused: false, hidden: false });
+  /* перезапуск текущего примера начисто — после возврата на вкладку */
+  const [run, setRun] = useState(0);
 
   const sync = () => {
     const tl = tlRef.current;
     if (!tl) return;
-    if (live.current.visible && !live.current.paused) tl.play();
+    if (live.current.visible && !live.current.paused && !live.current.hidden) tl.play();
     else tl.pause();
   };
+
+  /* вкладку свернули — сцена замирает; вернулись — пример начинается заново,
+     чтобы перестановки плиток не наслаивались друг на друга */
+  useEffect(() => {
+    const onVis = () => {
+      if (document.hidden) {
+        live.current.hidden = true;
+        tlRef.current?.pause();
+      } else if (live.current.hidden) {
+        live.current.hidden = false;
+        setRun((r) => r + 1);
+      }
+    };
+    document.addEventListener("visibilitychange", onVis);
+    return () => document.removeEventListener("visibilitychange", onVis);
+  }, []);
 
   useEffect(() => {
     const el = rootRef.current;
@@ -413,8 +433,16 @@ export default function Inside({ bare = false }: { bare?: boolean }) {
     return () => {
       tlRef.current = null;
       ctx.revert();
+      /* перестановки плиток запускаются вне сцены — гасим их и убираем снимки строк */
+      const loose = [...reqTiles, ...ansTiles, ...ansMask, box, ans];
+      gsap.killTweensOf(loose);
+      gsap.set(loose, { clearProps: "transform,opacity,height" });
+      box.parentElement?.querySelectorAll("[data-ghost]").forEach((g) => {
+        gsap.killTweensOf(g);
+        g.remove();
+      });
     };
-  }, [ex, width]);
+  }, [ex, width, run]);
 
   const e = EXAMPLES[ex];
   const g = width ? routeGeometry(width) : null;

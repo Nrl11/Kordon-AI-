@@ -2,12 +2,16 @@ import type { Metadata } from "next";
 import Section from "@/components/site/Section";
 import Faq from "@/components/site/Faq";
 import RequestCard from "@/components/start/Request";
+import { pageMeta } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "Как начать",
+export const metadata: Metadata = pageMeta({
+  path: "/start",
+  title: "Пилот ИИ-шлюза в вашем контуре",
   description:
-    "Как начать работу с Кордон AI: пилот и отчёт на ваших данных, затем решение о лицензии. Заявка на пилот.",
-};
+    "Оставьте заявку на пилот Кордон AI: обсудим ваши задачи и покажем шлюз в работе до решения о покупке. Ответы на частые вопросы о подключении.",
+  og: "start",
+  ogTitle: "Начните с пилота",
+});
 
 const FAQ = [
   {

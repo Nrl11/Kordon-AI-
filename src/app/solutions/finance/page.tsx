@@ -7,12 +7,16 @@ import PayModels from "@/components/finance/PayModels";
 import SpendFlow from "@/components/finance/SpendFlow";
 import Limits from "@/components/finance/Limits";
 import Calculator from "@/components/finance/Calculator";
+import { pageMeta } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "Для финансов",
+export const metadata: Metadata = pageMeta({
+  path: "/solutions/finance",
+  title: "Расходы на нейросети: отчёт и бюджеты команд",
   description:
-    "Кордон AI для финансового директора: один отчёт по расходам на ИИ вместо разрозненных подписок и счетов, куда уходят деньги по задачам и моделям, три способа оплаты, бюджеты команд в рублях.",
-};
+    "Один отчёт по расходам на ИИ вместо разрозненных подписок: сколько стоят API, подписки и общий пул, бюджеты команд в рублях и калькулятор на ваших цифрах.",
+  og: "finance",
+  ogTitle: "ИИ — статья бюджета с прогнозом",
+});
 
 const LIMITS = [
   "Лимит в рублях на ключ, команду или проект",

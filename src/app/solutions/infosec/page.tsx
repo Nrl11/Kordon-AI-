@@ -7,12 +7,16 @@ import Feed from "@/components/infosec/Feed";
 import Investigation from "@/components/infosec/Investigation";
 import Compliance from "@/components/infosec/Compliance";
 import DataClasses from "@/components/infosec/DataClasses";
+import { pageMeta } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "Для ИБ",
+export const metadata: Metadata = pageMeta({
+  path: "/solutions/infosec",
+  title: "ИИ-шлюз для ИБ: журнал обращений к нейросетям",
   description:
-    "Кордон AI для службы информационной безопасности: каждое обращение к нейросетям в журнале и SIEM, правила для классов данных, поиск по истории обращений, 152-ФЗ и приказ ФСТЭК № 117.",
-};
+    "Каждое обращение к нейросетям — в журнале и SIEM, свои правила для каждого класса данных, поиск по истории за секунды. 152-ФЗ и приказ ФСТЭК № 117.",
+  og: "infosec",
+  ogTitle: "ИБ видит каждый запрос к модели",
+});
 
 export default function InfosecPage() {
   return (

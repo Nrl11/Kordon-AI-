@@ -23,7 +23,7 @@ export default function Hero() {
             Защита, которая окупает себя
           </h1>
           <p className={styles.sub}>
-            {nb("Все запросы сотрудников и ИИ-агентов к нейросетям — через один шлюз внутри вашего контура.")}
+            {nb("Все запросы сотрудников и ИИ-агентов к нейросетям — через один шлюз внутри вашего контура")}
           </p>
           <div className={styles.actions}>
             <Link className="btn btn-primary" href="#pilot">
@@ -79,6 +79,7 @@ function HeroVideo({ src, poster }: { src: string; poster?: string }) {
 function HeroScheme() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const labelRefs = useRef<(HTMLSpanElement | null)[]>([]);
+  const labelsBox = useRef<HTMLDivElement>(null);
   const [now, setNow] = useState<{ story: number; phase: Phase }>({ story: 0, phase: "go" });
   const [paused, setPaused] = useState(false);
   const onPhase = useCallback((story: number, phase: Phase) => setNow({ story, phase }), []);
@@ -100,6 +101,9 @@ function HeroScheme() {
         if (l.hide) el.dataset.hide = "";
         else delete el.dataset.hide;
       });
+      /* подписи показываем только после первого кадра — до него они стоят в углу */
+      const box = labelsBox.current;
+      if (box && !box.dataset.placed) box.dataset.placed = "";
       return more;
     };
     return scene;
@@ -124,7 +128,7 @@ function HeroScheme() {
             <LogoMark size={260} thick={false} />
           </div>
         )}
-        <div className={styles.labels} aria-hidden="true">
+        <div ref={labelsBox} className={styles.labels} aria-hidden="true">
           {HERO_LABELS.map((l, i) => (
             <span
               key={l.id}

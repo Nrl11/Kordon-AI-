@@ -37,14 +37,29 @@ export function useStage<S extends Stage>(
     let raf = 0;
     let visible = false;
     let last = 0;
+    /* чёткость: не выше 1,5 — разница с 2 не видна, а пикселей вдвое меньше;
+       если кадры не успевают, опускаем до 1 */
+    let dprCap = 1.5;
+    let slow = 0;
+    let fast = 0;
+    let onSlow = () => {};
     const cleanups: (() => void)[] = [];
 
     const loop = (now: number) => {
       raf = 0;
       const s = stageRef.current;
       if (!s || !visible || disposed) return;
-      const dt = last ? Math.min((now - last) / 1000, 0.1) : 0.016;
+      const raw = last ? (now - last) / 1000 : 0.016;
+      const dt = Math.min(raw, 0.1);
       last = now;
+      if (dprCap > 1 && raw < 0.1) {
+        if (raw > 1 / 40) slow++;
+        else fast++;
+        if (slow + fast >= 90) {
+          if (slow > 45) onSlow();
+          slow = fast = 0;
+        }
+      }
       const more = s.frame(now / 1000, dt);
       if (more) raf = requestAnimationFrame(loop);
       else last = 0;
@@ -71,8 +86,12 @@ export function useStage<S extends Stage>(
       const resize = () => {
         const w = box.clientWidth;
         const h = box.clientHeight;
-        s.resize(w, h, Math.min(window.devicePixelRatio || 1, w < 700 ? 1.75 : 2));
+        s.resize(w, h, Math.min(window.devicePixelRatio || 1, dprCap));
         kick();
+      };
+      onSlow = () => {
+        dprCap = 1;
+        resize();
       };
       resize();
       const ro = new ResizeObserver(resize);

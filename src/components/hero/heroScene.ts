@@ -257,6 +257,14 @@ export function createHeroScene(
   ring.visible = ring2.visible = false;
   scene.add(ring, ring2);
 
+  /* кольцо на полу там, где запрос закончил путь: золотое — принят моделью,
+     синее — остался в контуре, красное — вернулся отправителю */
+  const landMat = keep(new THREE.MeshBasicMaterial({ color: "#e0b04a", transparent: true, opacity: 0, depthWrite: false }));
+  const landRing = new THREE.Mesh(keep(new THREE.RingGeometry(0.34, 0.4, 72)), landMat);
+  landRing.rotation.x = -Math.PI / 2;
+  landRing.visible = false;
+  scene.add(landRing);
+
   /* ——— отделы, внешние модели, локальная модель ——— */
   const padGeo = keep(new THREE.CylinderGeometry(0.36, 0.38, 0.08, 48));
   const padRingGeo = keep(new THREE.TorusGeometry(0.31, 0.014, 8, 64));
@@ -337,7 +345,8 @@ export function createHeroScene(
   allHi.forEach((h) => draw(h, 0));
 
   const inLen = inPts.map((p) => new Path(p).len);
-  const thruLen = new Path(thruPts).len;
+  const thruPath = new Path(thruPts);
+  const thruLen = thruPath.len;
 
   /* ——— фоновый поток: шарики с ровным шагом ———
      до арки: красный — в запросе персданные, тёмный — чистый; за аркой:
@@ -362,7 +371,6 @@ export function createHeroScene(
   const beads = Array.from({ length: 22 }, () => {
     const m = new THREE.Mesh(beadGeo, bead.clean);
     m.visible = false;
-    m.castShadow = true;
     scene.add(m);
     return m;
   });
@@ -374,7 +382,6 @@ export function createHeroScene(
   const CH = 0.64;
   const lead = new THREE.Group();
   const card = new THREE.Mesh(keep(extrude(roundedRect(CW, CH, 0.09), 0.06, 0.016, 10)), satin);
-  card.castShadow = true;
   lead.add(card);
   const tLine = keep(new THREE.PlaneGeometry(0.56, 0.045));
   const lt1 = new THREE.Mesh(tLine, textLine);
@@ -396,11 +403,19 @@ export function createHeroScene(
   lead.visible = false;
   scene.add(lead);
 
-  /* путь выделенного запроса: от отдела к арке, сквозь неё к модели или к локальной */
+  /* тени отбрасывают только неподвижные стены, арка, отделы и модели —
+     их карта считается один раз, а не на каждом кадре */
+  renderer.shadowMap.autoUpdate = false;
+  renderer.shadowMap.needsUpdate = true;
+
+  /* путь выделенного запроса: от отдела к арке, сквозь неё к модели или к локальной.
+     К локальной модели документ останавливается в стороне от неё — дальше
+     поднимается и садится сверху, не задевая коробку */
+  const localLeadPts = quad(gin, V(-1.35, 1.0), V(LOCAL.x + 1.1, LOCAL.z));
   const leadPath = STORIES.map((s) => {
     const pin = inPts[s.from];
     if (s.to === "stop") return new Path(pin);
-    if (s.to === "local") return new Path([...pin, ...localPts.slice(1)]);
+    if (s.to === "local") return new Path([...pin, ...localLeadPts.slice(1)]);
     return new Path([...pin, ...thruPts.slice(1), ...outPts[s.to].slice(1)]);
   });
 
@@ -520,34 +535,80 @@ export function createHeroScene(
     const path = leadPath[story];
     const L = inLen[s.from];
 
-    /* где документ: подлёт к арке, проход сквозь неё, путь к модели */
+    /* где документ: подлёт к арке, проход сквозь неё, путь к модели,
+       а в конце — посадка: документ поднимается над адресатом и плавно
+       опускается в него, по полу расходится кольцо */
+    const eOut = T.in + T.core + T.out;
+    const dest = toLocal
+      ? { x: LOCAL.x, z: LOCAL.z, top: 0.66 }
+      : typeof s.to === "number"
+        ? { x: MODEL_X[s.to], z: MODEL_Z, top: 0.55 }
+        : { x: DEPT_X[s.from], z: DEPT_Z, top: 0.09 };
     let d: number;
     let grow = 1;
-    let lift = 0;
+    let y = CARD_Y;
+    let shrink = 1;
+    let bank = 1;
     const kIn = inOut(seg(e, 0.05, T.in));
     const kCore = seg(e, T.in, T.in + T.core);
+    /* когда документ садится и когда по полу идёт кольцо */
+    let landAt = eOut;
     if (e < T.in) {
       d = 0.1 + kIn * (L - 0.1);
       grow = 0.45 + 0.55 * Math.min(1, kIn * 1.6);
+      path.at(d, lead.position, tan);
     } else if (stop) {
-      /* упёрся в мембрану, отскочил и упал */
-      const hit = seg(e, T.in, T.in + 0.4);
-      d = L - Math.sin(Math.PI * hit) * 0.5 - seg(e, T.in + 0.4, T.in + 1) * 0.3;
-      lift = -(seg(e, T.in + 0.5, T.in + 1.3) ** 2) * 0.5;
+      /* упёрся в мембрану, мотнул «нет» и вернулся в свой отдел */
+      const hit = seg(e, T.in, T.in + 0.35);
+      const back = inOut(seg(e, T.in + 0.8, T.in + 2.1));
+      d = L - Math.sin(Math.PI * hit) * 0.14 - back * (L - 0.12);
+      path.at(d, lead.position, tan);
+      const sh = seg(e, T.in + 0.3, T.in + 0.8);
+      lead.position.x += Math.sin(sh * Math.PI * 6) * 0.05 * (1 - sh);
+      bank = 0;
+      landAt = T.in + 2.1;
     } else if (toLocal) {
-      /* заходит в арку на проверку и разворачивается к локальной модели */
-      d = L + Math.sin(Math.PI * kCore) * 0.42;
-      if (e >= T.in + T.core) d = L + (path.len - L) * easeOut(seg(e, T.in + T.core, T.in + T.core + T.out));
+      /* заходит в арку на проверку, выходит и поворачивает к локальной модели */
+      if (e < T.in + T.core) thruPath.at(Math.sin(Math.PI * kCore) * 0.34, lead.position, tan);
+      else path.at(L + (path.len - L) * inOut(seg(e, T.in + T.core, eOut)), lead.position, tan);
     } else if (e < T.in + T.core) {
-      d = L + thruLen * inOut(kCore);
+      path.at(L + thruLen * inOut(kCore), lead.position, tan);
     } else {
-      d = L + thruLen + (path.len - L - thruLen) * easeOut(seg(e, T.in + T.core, T.in + T.core + T.out));
+      path.at(L + thruLen + (path.len - L - thruLen) * inOut(seg(e, T.in + T.core, eOut)), lead.position, tan);
     }
-    path.at(d, lead.position, tan);
-    lead.position.y = CARD_Y + lift;
-    /* документ смотрит в камеру и чуть кренится по ходу */
-    lead.rotation.set(0, (base.yaw * Math.PI) / 180, -tan.x * 0.16);
-    if (stop) lead.rotation.z += seg(e, T.in + 0.5, T.in + 1.3) * 0.9;
+    /* посадка в адресата: документ сначала поднимается, потом встаёт над
+       адресатом, сжимается в жетон — и только жетон опускается внутрь,
+       поэтому сам документ никогда не проходит сквозь модель */
+    const kRise = inOut(seg(e, landAt, landAt + 0.32));
+    const kMove = inOut(seg(e, landAt + 0.22, landAt + 0.62));
+    const kShrink = inOut(seg(e, landAt + 0.62, landAt + 0.92));
+    const kDrop = inOut(seg(e, landAt + 0.92, landAt + 1.2));
+    if (kRise > 0) {
+      y = CARD_Y + (dest.top + 0.5 - CARD_Y) * kRise;
+      bank *= 1 - kRise;
+    }
+    if (kMove > 0) {
+      lead.position.x += (dest.x - lead.position.x) * kMove;
+      lead.position.z += (dest.z - lead.position.z) * kMove;
+    }
+    if (kShrink > 0) shrink = 1 - 0.86 * kShrink;
+    if (kDrop > 0) {
+      y += (dest.top + 0.03 - y) * kDrop;
+      shrink *= 1 - kDrop;
+    }
+    lead.position.y = y;
+    /* документ смотрит в камеру и слегка кренится по ходу */
+    lead.rotation.set(0, (base.yaw * Math.PI) / 180, -tan.x * 0.1 * bank);
+
+    /* кольцо на полу у адресата */
+    const p = seg(e, landAt + 1.0, landAt + 1.7);
+    landRing.visible = p > 0 && p < 1 && fade > 0.02;
+    if (landRing.visible) {
+      landRing.position.set(dest.x, stop ? 0.095 : 0.015, dest.z);
+      landRing.scale.setScalar(0.8 + 1.1 * easeOut(p));
+      landMat.opacity = 0.85 * (1 - p);
+      landMat.color.set(stop ? "#e0453a" : toLocal ? "#3b5bea" : "#e0b04a");
+    }
 
     /* плашка переворачивается, когда документ проходит мембрану */
     bar.visible = masked || toLocal || stop;
@@ -559,9 +620,7 @@ export function createHeroScene(
     bar.rotation.x = ang;
     bar.position.z = 0.04 + Math.sin(ang) * 0.12;
 
-    let vis = fade;
-    if (stop) vis *= 1 - seg(e, T.in + 0.9, T.in + 1.4);
-    else vis *= 1 - seg(e, T.in + T.core + T.out - 0.25, T.in + T.core + T.out);
+    const vis = fade * shrink;
     lead.visible = vis > 0.02;
     lead.scale.setScalar(Math.max(0.0001, Math.min(1, e / 0.25) * vis * grow));
 
@@ -588,8 +647,8 @@ export function createHeroScene(
     ring.rotation.set(1.2 + check * 3.4, check * 4.2, 0);
     ring2.rotation.set(-0.4 - check * 2.6, 1.1 + check * 3.0, 0);
     gold.envMapRotation.set(0, 0.6 + check * Math.PI * 1.4, 0);
-    /* модель, принявшая запрос, коротко вспыхивает */
-    const arrive = Math.sin(Math.PI * seg(e, T.in + T.core + T.out * 0.7, T.in + T.core + T.out + 0.5));
+    /* модель, принявшая запрос, коротко вспыхивает, когда документ садится */
+    const arrive = Math.sin(Math.PI * seg(e, landAt + 0.95, landAt + 1.5));
     modelStuds.forEach((st, i) => st.scale.setScalar(1 + (s.to === i ? 0.5 * arrive : 0)));
     localStud.scale.setScalar(1 + (toLocal ? 0.5 * arrive : 0));
 

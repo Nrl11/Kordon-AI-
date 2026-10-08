@@ -28,7 +28,7 @@ export default function Request() {
         <div className={styles.copy}>
           <h1 className={styles.title}>Начните с пилота</h1>
           <p className={styles.lead}>
-            {nb("Покажем Кордон на ваших данных и соберём отчёт: что уходит в модели и сколько это стоит. Решение о покупке — после отчёта.")}
+            {nb("Покажем Кордон на ваших данных и соберём отчёт: что уходит в модели и сколько это стоит. Решение о покупке — после отчёта")}
           </p>
 
           <div ref={ref} className={styles.slot} data-in={seen || undefined}>

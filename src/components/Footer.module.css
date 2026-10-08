@@ -52,6 +52,41 @@
 .cols a:hover {
   color: var(--gold-2);
 }
+/* сноски страницы: источники цифр, отмеченных звёздочками */
+.notes {
+  grid-column: 1 / -1;
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding: 20px 0 0;
+  border-top: 1px solid var(--on-ink-rule);
+  list-style: none;
+  font-size: var(--t-small);
+  color: var(--on-ink-2);
+}
+.notes li {
+  display: flex;
+  gap: 8px;
+  scroll-margin-top: calc(var(--nav-h) + 24px);
+}
+.notes span {
+  flex: none;
+  min-width: 2.2em;
+  color: var(--gold-2);
+}
+.notes a {
+  color: var(--on-ink-2);
+  text-decoration: underline;
+  text-decoration-color: var(--on-ink-rule);
+  text-underline-offset: 3px;
+  transition: color 0.2s;
+}
+.notes a:hover {
+  color: #ffffff;
+}
+.notes li:target a {
+  color: #ffffff;
+}
 .legal {
   grid-column: 1 / -1;
   display: flex;
@@ -62,6 +97,35 @@
   border-top: 1px solid var(--on-ink-rule);
   font-size: var(--t-small);
   color: var(--on-ink-2);
+}
+
+.legalLinks {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 8px 20px;
+}
+.legalLinks a,
+.legalBtn {
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  color: var(--on-ink-2);
+  text-decoration: underline;
+  text-decoration-color: var(--on-ink-rule);
+  text-underline-offset: 3px;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+.legalLinks a:hover,
+.legalBtn:hover {
+  color: #ffffff;
+}
+.legalBtn:focus-visible,
+.legalLinks a:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 3px;
+  border-radius: 4px;
 }
 
 @media (max-width: 860px) {

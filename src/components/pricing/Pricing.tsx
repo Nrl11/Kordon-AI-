@@ -6,6 +6,7 @@ import Slider from "@/components/ui/Slider";
 import { cx, vars } from "@/lib/css";
 import { num } from "@/lib/format";
 import { requestLicense } from "@/lib/license";
+import { sub } from "@/lib/typo";
 import { BUFFER, MODULES, TIERS, tierFor, toCount, toSlider } from "./tiers";
 import styles from "./Pricing.module.css";
 
@@ -32,7 +33,7 @@ export default function Pricing({ title, lead }: { title: string; lead: string }
       <div className={cx("wrap", styles.hero)}>
         <div className={styles.left}>
           <h1 className="h1-page">{title}</h1>
-          <p className="page-lead">{lead}</p>
+          <p className="page-lead">{sub(lead)}</p>
 
           <aside className={styles.result} aria-live="polite">
             <p className={styles.resLabel}>Ваша лицензия</p>

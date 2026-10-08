@@ -46,7 +46,8 @@ const spark = (x: number, y: number, s: number) =>
 
 export default function Route({ g, who, closed }: { g: Geometry; who: string; closed: boolean }) {
   const { w, h, cy, bx, gap, local, models, paths, narrow } = g;
-  const cross = bx + gap + (narrow ? 14 : 22); // отметка проверки сразу за границей
+  /* отметка проверки за границей — с зазором от знака Кордона (он ±22 от границы) */
+  const cross = bx + gap + (narrow ? 26 : 36);
   return (
     <svg className={styles.routeSvg} width={w} height={h} viewBox={`0 0 ${w} ${h}`} role="img" aria-label="Маршрут запроса через Кордон">
       {/* зоны */}
@@ -80,7 +81,7 @@ export default function Route({ g, who, closed }: { g: Geometry; who: string; cl
           <path d={`M${cross - 4},${cy + 0.5} l2.8,2.8 l5.2,-5.6`} />
         )}
         {!narrow && (
-          <text x={cross + 16} y={cy - 16}>
+          <text x={cross + 20} y={cy - 18}>
             {closed ? "наружу нельзя" : "маскирование — можно"}
           </text>
         )}

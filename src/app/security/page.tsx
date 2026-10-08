@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { pageMeta } from "@/lib/seo";
 import Link from "next/link";
 import PageHead from "@/components/site/PageHead";
 import Section from "@/components/site/Section";
@@ -9,11 +10,14 @@ import TokenSheet from "@/components/security/TokenSheet";
 import Bench from "@/components/security/Bench";
 import Injections from "@/components/security/Injections";
 
-export const metadata: Metadata = {
-  title: "Безопасность",
+export const metadata: Metadata = pageMeta({
+  path: "/security",
+  title: "Защита данных при работе с нейросетями",
   description:
-    "Кордон AI проверяет каждый запрос к нейросетям до отправки: персданные и ключи заменяются метками, скрытые команды останавливаются, закрытые документы обрабатывает только локальная модель.",
-};
+    "Кордон проверяет каждый запрос к нейросетям до отправки: персданные и ключи заменяет метками, скрытые команды останавливает, закрытое оставляет локальной модели.",
+  og: "security",
+  ogTitle: "Модель видит только разрешённое",
+});
 
 export default function SecurityPage() {
   return (

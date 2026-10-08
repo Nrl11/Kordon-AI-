@@ -20,7 +20,7 @@ export const FOOTER = [
   {
     title: "Продукт",
     links: [
-      { href: "/#control", label: "Пульт управления" },
+      { href: "/#control", label: "Портал администратора" },
       { href: "/#deploy", label: "Как ставится" },
       { href: "/security", label: "Безопасность" },
       { href: "/pricing", label: "Стоимость" },
@@ -32,8 +32,8 @@ export const FOOTER = [
     title: "Компания",
     links: [
       { href: "/about", label: "О компании" },
+      { href: "https://webpractik.ai", label: "Вебпрактик AI" },
       { href: "https://t.me/Webpractik_Ai", label: "Канал Вебпрактик AI" },
-      { href: "/privacy", label: "Политика ПДн" },
     ],
   },
 ] as const;

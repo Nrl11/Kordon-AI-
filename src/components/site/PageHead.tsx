@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import Reveal from "@/components/ui/Reveal";
 import { cx } from "@/lib/css";
-import { nb, typo } from "@/lib/typo";
+import { nb, sub } from "@/lib/typo";
 
 /* Шапка страницы: заголовок, одна строка, было/стало (для решений),
    действия — и справа сцена. */
@@ -31,7 +31,7 @@ export default function PageHead({
           </h1>
           {lead && (
             <p className="page-lead" data-reveal="">
-              {typo(lead)}
+              {sub(lead)}
             </p>
           )}
           {before && after && (

@@ -33,7 +33,7 @@ export default function PilotCta() {
           <LogoMark size={64} tone="dark" thick={false} className={styles.mark} />
           <div className={styles.copy}>
             <h2 id={`${id}-t`}>Начните с пилота</h2>
-            <p>{nb("Оставьте рабочую почту — инженер свяжется и всё обсудит.")}</p>
+            <p>{nb("Оставьте рабочую почту — инженер свяжется и всё обсудит")}</p>
           </div>
           <form className={styles.form} onSubmit={submit} noValidate>
             <label htmlFor={`${id}-e`}>Рабочая почта</label>
