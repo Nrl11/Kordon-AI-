@@ -233,11 +233,11 @@
   color: #ffffff;
 }
 
-/* ——— рейтинги: четыре первых места ——— */
+/* ——— рейтинги: пять первых мест в ряд ——— */
 .awards {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: clamp(20px, 3vw, 44px);
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: clamp(18px, 2.4vw, 36px);
 }
 /* карточка — ссылка на рейтинг: при наведении верхняя линия золотеет,
    стрелка сдвигается */
@@ -297,6 +297,11 @@
   line-height: 1.2;
   letter-spacing: -0.015em;
   text-wrap: balance;
+}
+@media (max-width: 1300px) and (min-width: 1101px) {
+  .awards {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
 }
 .awards span {
   font-size: 0.875rem;

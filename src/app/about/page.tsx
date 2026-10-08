@@ -59,6 +59,13 @@ const AWARDS = [
     year: "2026",
     href: "https://ratingruneta.ru/ai-development/quality_management/",
   },
+  {
+    place: 1,
+    what: "Комплексное агентство для финтеха",
+    where: "Рейтинг Рунета",
+    year: "2025",
+    href: "https://ratingruneta.ru/web+seo/",
+  },
 ];
 
 const RUBRICS = ["Разборы внедрений", "Стек и архитектура", "Исследования рынка", "On-premise и безопасность"];
