@@ -40,14 +40,15 @@
   justify-content: space-between;
   gap: 10px;
   width: 196px;
-  padding: 10px 12px;
+  height: 52px;
+  padding: 0 12px;
   border-radius: 12px;
   background: #ffffff;
   box-shadow: 0 16px 30px -18px rgba(0, 0, 0, 0.7);
   opacity: 0;
 }
 .scene[data-narrow] .bill {
-  width: 156px;
+  width: 240px;
 }
 .bill span {
   display: grid;
@@ -64,6 +65,9 @@
   font-size: 11px;
   line-height: 1.25;
   color: var(--ink-3);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .bill em {
   font-style: normal;

@@ -43,8 +43,8 @@ export default function InfosecPage() {
 
       <Section
         id="investigate"
-        title="Любое обращение — за секунды"
-        sub="Поиск по сотруднику, ключу или типу данных — без запроса в ИТ."
+        title="Журнал обращений с поиском"
+        sub="По сотруднику, ключу или типу данных — без запроса в ИТ"
       >
         <Investigation />
       </Section>

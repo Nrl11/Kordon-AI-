@@ -8,6 +8,7 @@ import KeyRoutes from "@/components/it/KeyRoutes";
 import Scenarios from "@/components/it/Scenarios";
 import AgentRun from "@/components/it/AgentRun";
 import { pageMeta } from "@/lib/seo";
+import { nb } from "@/lib/typo";
 
 export const metadata: Metadata = pageMeta({
   path: "/solutions/it",
@@ -19,10 +20,9 @@ export const metadata: Metadata = pageMeta({
 });
 
 const KEY_RULES = [
-  "какие модели: все, только дешёвые или только локальные",
-  "сколько потратить: лимит в рублях на месяц",
-  "до какого числа ключ действует",
-  "ключи провайдеров при этом хранятся только в шлюзе",
+  "свои модели — например, боту поддержки только локальная",
+  "лимит в рублях на месяц",
+  "срок действия",
 ];
 
 export default function ItPage() {
@@ -47,7 +47,9 @@ export default function ItPage() {
       <Section id="keys" title="У каждого свой ключ с правилами" tone="soft">
         <div className="split">
           <div className="split-text">
-            <p className="lead">Ключ выдаётся сотруднику, сервису или подрядчику. В нём записано, что можно:</p>
+            <p className="lead">
+              {nb("Ключ выдаётся сотруднику, сервису или подрядчику, а ключи провайдеров остаются в шлюзе. У каждого ключа:")}
+            </p>
             <ul className="list-check">
               {KEY_RULES.map((r) => (
                 <li key={r}>{r}</li>
