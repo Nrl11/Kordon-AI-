@@ -2,10 +2,11 @@
   padding: clamp(40px, 7vh, 88px) 0;
   scroll-margin-top: 80px;
 }
+/* тёмная полоса: знак, тезис и одна кнопка — на общую форму заявки */
 .card {
   position: relative;
   display: grid;
-  grid-template-columns: auto minmax(0, 1fr) minmax(0, 1fr);
+  grid-template-columns: auto minmax(0, 1fr) auto;
   align-items: center;
   gap: clamp(20px, 3vw, 48px);
   padding: clamp(28px, 4vw, 52px);
@@ -27,7 +28,7 @@
 }
 .mark,
 .copy,
-.form {
+.action {
   position: relative;
   z-index: 1;
 }
@@ -41,80 +42,30 @@
   text-wrap: balance;
 }
 .copy p {
-  max-width: 46ch;
+  max-width: 52ch;
   margin-top: 10px;
   color: var(--on-ink-2);
   text-wrap: pretty;
 }
-
-/* поле почты и кнопка */
-.form {
-  display: grid;
-  gap: 8px;
-}
-.form label {
-  font-size: 0.875rem;
-  font-weight: 700;
-  color: var(--on-ink-2);
-}
-.row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-}
-.row input {
-  flex: 1 1 220px;
-  min-width: 0;
-  min-height: 52px;
-  padding: 0 18px;
-  border: 1.5px solid rgba(255, 255, 255, 0.22);
-  border-radius: 999px;
-  background: rgba(255, 255, 255, 0.06);
-  color: #ffffff;
-  font: inherit;
-  font-size: 1rem;
-  transition:
-    border-color 0.2s,
-    background-color 0.2s;
-}
-.row input::placeholder {
-  color: rgba(255, 255, 255, 0.4);
-}
-.row input:focus {
-  outline: none;
-  border-color: var(--gold);
-  background: rgba(255, 255, 255, 0.1);
-}
-.row input:focus-visible {
+.action:focus-visible {
   outline: 2px solid var(--gold);
-  outline-offset: 2px;
-}
-.row input[aria-invalid] {
-  border-color: #ff8a7f;
-}
-.row :global(.btn) {
-  min-height: 52px;
-}
-.error {
-  font-size: 0.875rem;
-  font-weight: 600;
-  color: #ff8a7f;
+  outline-offset: 3px;
 }
 
-@media (max-width: 1100px) {
+@media (max-width: 900px) {
   .card {
     grid-template-columns: auto minmax(0, 1fr);
   }
-  .form {
+  .action {
     grid-column: 1 / -1;
+    justify-self: start;
   }
 }
 @media (max-width: 560px) {
   .card {
     grid-template-columns: minmax(0, 1fr);
   }
-  .row :global(.btn) {
+  .action {
     width: 100%;
-    justify-content: center;
   }
 }

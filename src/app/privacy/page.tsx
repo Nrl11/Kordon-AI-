@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { pageMeta, SITE_URL } from "@/lib/seo";
+import { CONTACTS } from "@/lib/site";
 import { nb } from "@/lib/typo";
 import styles from "@/components/legal/Legal.module.css";
 
@@ -22,8 +23,9 @@ const OPERATOR = {
   inn: "6163109767",
   ogrn: "1116195010711",
   address: "344006, Ростовская обл., г. Ростов-на-Дону, пр. Ворошиловский, д. 2/2, оф. 55",
-  email: "info@webpractik.ru",
-  phone: "+7 (863) 303-203-9",
+  email: CONTACTS.email,
+  phone: CONTACTS.phone,
+  tel: CONTACTS.tel,
 };
 
 const TOC = [
@@ -192,7 +194,7 @@ export default function Privacy() {
               <h3>Необходимые</h3>
               <p>
                 {nb(
-                  "Без них сайт не работает как задумано: они помнят ваш выбор по cookie и переносят почту из короткой формы на странице заявки. Включены всегда.",
+                  "Без них сайт не работает как задумано: они помнят ваш выбор по cookie и параметры лицензии, если вы перешли к заявке со страницы стоимости. Включены всегда.",
                 )}
               </p>
               <h3>Аналитические</h3>
@@ -217,7 +219,7 @@ export default function Privacy() {
               <h3>Как отказаться</h3>
               <p>
                 {nb(
-                  "Изменить выбор можно в любой момент — кнопкой «Настройки cookie» внизу каждой страницы. Можно и вовсе запретить cookie в настройках браузера — Chrome, Яндекс Браузера, Firefox и других. Тогда сайт оставит только необходимые cookie, и часть удобств, например перенос почты в форму, может не работать.",
+                  "Изменить выбор можно в любой момент — кнопкой «Настройки cookie» внизу каждой страницы. Можно и вовсе запретить cookie в настройках браузера — Chrome, Яндекс Браузера, Firefox и других. Тогда сайт оставит только необходимые cookie, а если отключить и их, часть удобств может не работать.",
                 )}
               </p>
             </section>
@@ -304,7 +306,7 @@ export default function Privacy() {
                 <b>{OPERATOR.name}</b>
                 <span>{nb(OPERATOR.address)}</span>
                 <a href={`mailto:${OPERATOR.email}`}>{OPERATOR.email}</a>
-                <a href={`tel:${OPERATOR.phone.replace(/[^\d+]/g, "")}`}>{OPERATOR.phone}</a>
+                <a href={`tel:${OPERATOR.tel}`}>{OPERATOR.phone}</a>
               </address>
             </section>
 

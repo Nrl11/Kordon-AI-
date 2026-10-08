@@ -1,0 +1,151 @@
+/* тёмная карточка с телефоном и почтой — главное на странице */
+.card {
+  position: relative;
+  display: grid;
+  justify-items: start;
+  gap: 10px;
+  padding: clamp(28px, 4vw, 52px);
+  border-radius: 28px;
+  background:
+    radial-gradient(60% 80% at 100% 0%, rgba(224, 176, 74, 0.16), transparent 70%),
+    var(--ink);
+  color: var(--on-ink);
+  box-shadow: 0 50px 90px -60px rgba(11, 19, 36, 0.8);
+}
+.mark {
+  position: absolute;
+  top: clamp(24px, 3vw, 40px);
+  right: clamp(24px, 3vw, 40px);
+}
+.eyebrow {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--gold-2);
+}
+.phone {
+  margin-top: 8px;
+  font-family: var(--f-display);
+  font-size: clamp(2rem, 1.2rem + 2.4vw, 3.4rem);
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.035em;
+  font-variant-numeric: tabular-nums;
+  color: #ffffff;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.email {
+  font-family: var(--f-display);
+  font-size: clamp(1.25rem, 1rem + 0.8vw, 1.75rem);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: #ffffff;
+  text-decoration: underline;
+  text-decoration-color: rgba(255, 255, 255, 0.3);
+  text-underline-offset: 6px;
+}
+.phone,
+.email {
+  transition:
+    color 0.2s,
+    text-decoration-color 0.2s;
+}
+.phone:hover,
+.email:hover {
+  color: var(--gold-2);
+  text-decoration-color: var(--gold-2);
+}
+.phone:focus-visible,
+.email:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 4px;
+  border-radius: 6px;
+}
+.note {
+  margin-top: 14px;
+  padding-top: 16px;
+  border-top: 1px solid var(--on-ink-rule);
+  align-self: stretch;
+  color: var(--on-ink-2);
+}
+
+/* офисы и реквизиты — три колонки с линией сверху, как рейтинги
+   на странице о компании */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(20px, 3vw, 44px);
+}
+.item {
+  display: grid;
+  align-content: start;
+  gap: 6px;
+  padding-top: 18px;
+  border-top: 2px solid var(--ink);
+}
+.item h3 {
+  font-family: var(--f-display);
+  font-size: clamp(1.2rem, 1rem + 0.5vw, 1.45rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+.item small {
+  font-size: 0.875rem;
+  color: var(--ink-3);
+}
+.item p {
+  margin-top: 10px;
+  font-size: 1.0625rem;
+  line-height: 1.5;
+  color: var(--ink);
+}
+.item a {
+  justify-self: start;
+  margin-top: 6px;
+  font-weight: 600;
+  color: var(--blue-ink);
+}
+.item a:hover {
+  text-decoration-color: currentColor;
+}
+.item a:focus-visible {
+  outline: 2px solid var(--blue);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+.legal {
+  display: grid;
+  gap: 6px;
+  margin: 10px 0 0;
+}
+.legal div {
+  display: flex;
+  gap: 10px;
+  align-items: baseline;
+}
+.legal dt {
+  min-width: 78px;
+  font-size: 0.875rem;
+  color: var(--ink-3);
+}
+.legal dd {
+  margin: 0;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+@media (max-width: 1100px) {
+  .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 560px) {
+  .grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .phone {
+    white-space: normal;
+  }
+}

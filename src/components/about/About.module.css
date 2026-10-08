@@ -239,12 +239,42 @@
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: clamp(20px, 3vw, 44px);
 }
-.awards article {
+/* карточка — ссылка на рейтинг: при наведении верхняя линия золотеет,
+   стрелка сдвигается */
+.award {
   display: grid;
   grid-template-rows: auto 1fr auto;
   gap: 12px;
   padding-top: 18px;
   border-top: 2px solid var(--ink);
+  color: inherit;
+  text-decoration: none;
+  transition: border-color 0.25s;
+}
+.award:hover {
+  border-top-color: var(--gold);
+}
+.award:hover h3 {
+  text-decoration: underline 2px var(--gold);
+  text-underline-offset: 4px;
+}
+.award:focus-visible {
+  outline: 2px solid var(--blue);
+  outline-offset: 6px;
+  border-radius: 4px;
+}
+.award i {
+  display: inline-block;
+  margin-left: 6px;
+  font-style: normal;
+  color: var(--ink-3);
+  transition:
+    transform 0.25s var(--ease-out),
+    color 0.25s;
+}
+.award:hover i {
+  color: var(--gold-ink);
+  transform: translate(2px, -2px);
 }
 .place {
   font-family: var(--f-display);

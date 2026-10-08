@@ -4,7 +4,6 @@ import { useEffect, useId, useRef, useState, type FormEvent } from "react";
 import { LogoMark } from "@/components/Logo";
 import { cx } from "@/lib/css";
 import { describeLicense, sizeFor, takeLicense, type LicenseIntent } from "@/lib/license";
-import { takePilot } from "@/lib/pilot";
 import { FOCUS, SIZES, validateLead, type Focus, type LeadData, type LeadErrors, type LeadField } from "@/lib/lead";
 import styles from "./Request.module.css";
 
@@ -43,9 +42,7 @@ export default function RequestForm({
 
   useEffect(() => {
     const raf = requestAnimationFrame(() => {
-      /* почта из поля «Пилот» на главной */
-      const email = takePilot();
-      if (email) setData((prev) => (prev.email ? prev : { ...prev, email }));
+      /* конфигурация лицензии со страницы стоимости */
       const d = takeLicense();
       if (!d) return;
       setLicense(d);

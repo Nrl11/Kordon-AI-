@@ -5,6 +5,7 @@ import Link from "next/link";
 import { LogoMark } from "@/components/Logo";
 import { useStage } from "@/components/three/useStage";
 import { cx } from "@/lib/css";
+import { CTA } from "@/lib/site";
 import { HERO_VIDEO } from "@/lib/media";
 import { nb } from "@/lib/typo";
 import { DEPTS, STORIES, destName, type Phase } from "./flow";
@@ -26,7 +27,7 @@ export default function Hero() {
             {nb("Все запросы сотрудников и ИИ-агентов к нейросетям — через один шлюз внутри вашего контура")}
           </p>
           <div className={styles.actions}>
-            <Link className="btn btn-primary" href="#pilot">
+            <Link className="btn btn-primary" href={CTA.href}>
               Запросить пилот <span className="arr" aria-hidden="true">→</span>
             </Link>
             <Link className={styles.textLink} href="#protect">

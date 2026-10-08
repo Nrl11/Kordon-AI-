@@ -29,12 +29,36 @@ const AI_WORK = [
   { tag: "Запуск", b: "Обучение", s: "Сотрудники учатся работать с ИИ, изменения закрепляются." },
 ];
 
-/* по блоку наград на webpractik.ru и рейтингу Рунета 2026 */
+/* первые места в Рейтинге Рунета — каждая карточка ведёт на сам рейтинг */
 const AWARDS = [
-  { place: 1, what: "Внедрение ИИ для финтеха", where: "Рейтинг Рунета", year: "2025" },
-  { place: 1, what: "ИИ-разработка и внедрения для госструктур", where: "Рейтинг Рунета", year: "2026" },
-  { place: 1, what: "Комплексное агентство для финтеха", where: "Рейтинг Рунета", year: "2025" },
-  { place: 1, what: "Разработка и продвижение сайтов банков", where: "Рейтинг Рунета", year: "2025" },
+  {
+    place: 1,
+    what: "Внедрение ИИ для финтеха",
+    where: "Рейтинг Рунета",
+    year: "2025",
+    href: "https://ratingruneta.ru/ai-development/finance/2025/",
+  },
+  {
+    place: 1,
+    what: "ИИ-разработка и внедрения для госструктур",
+    where: "Рейтинг Рунета",
+    year: "2026",
+    href: "https://ratingruneta.ru/ai-development/government-structures-and-services/",
+  },
+  {
+    place: 1,
+    what: "Разработка и продвижение сайтов",
+    where: "Рейтинг Рунета",
+    year: "2026",
+    href: "https://ratingruneta.ru/web+seo/",
+  },
+  {
+    place: 1,
+    what: "Управление качеством в ИИ",
+    where: "Рейтинг Рунета",
+    year: "2026",
+    href: "https://ratingruneta.ru/ai-development/quality_management/",
+  },
 ];
 
 const RUBRICS = ["Разборы внедрений", "Стек и архитектура", "Исследования рынка", "On-premise и безопасность"];
@@ -100,7 +124,15 @@ export default function AboutPage() {
       <Section id="awards" title="Рейтинги и награды">
         <Reveal className={styles.awards} threshold={0.2}>
           {AWARDS.map((a, i) => (
-            <article key={a.what} data-reveal="" style={vars({ "--i": i })}>
+            <a
+              key={a.what}
+              className={styles.award}
+              href={a.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              data-reveal=""
+              style={vars({ "--i": i })}
+            >
               <b className={styles.place}>
                 <small>№</small>
                 {a.place}
@@ -108,8 +140,10 @@ export default function AboutPage() {
               <h3>{nb(a.what)}</h3>
               <span>
                 {a.where}, {a.year}
+                <i aria-hidden="true">↗</i>
+                <em className="sr-only"> — откроется в новой вкладке</em>
               </span>
-            </article>
+            </a>
           ))}
         </Reveal>
       </Section>

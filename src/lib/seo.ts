@@ -56,5 +56,6 @@ export const PAGES = [
   "/pricing",
   "/start",
   "/about",
+  "/contacts",
   "/privacy",
 ] as const;

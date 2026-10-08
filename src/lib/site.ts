@@ -12,6 +12,7 @@ export const NAV = [
   { href: "/security", label: "Безопасность" },
   { href: "/pricing", label: "Стоимость" },
   { href: "/about", label: "О компании" },
+  { href: "/contacts", label: "Контакты" },
 ] as const;
 
 export const CTA = { href: "/start", label: "Обсудить внедрение" } as const;
@@ -22,8 +23,18 @@ export const CONTACTS = {
   tel: "+74955405179",
   email: "ai@webpractik.ru",
   address: "Москва, ул. Шаболовка, д. 34, стр. 3",
+  telegram: "https://t.me/Webpractik_Ai",
 } as const;
-export const LEGAL = {
+/* офисы: Москва — рабочий, Ростов-на-Дону — юридический и почтовый адрес */
+export const OFFICES = [
+  { city: "Москва", note: "офис", address: "ул. Шаболовка, д. 34, стр. 3", map: "Москва, ул. Шаболовка, 34с3" },
+  {
+    city: "Ростов-на-Дону",
+    note: "юридический и почтовый адрес",
+    address: "344006, пр. Ворошиловский, д. 2/2, оф. 55",
+    map: "Ростов-на-Дону, Ворошиловский проспект, 2/2",
+  },
+] as const;export const LEGAL = {
   name: "ООО «Вебпрактик»",
   inn: "6163109767",
   ogrn: "1116195010711",
@@ -46,6 +57,7 @@ export const FOOTER = [
     title: "Компания",
     links: [
       { href: "/about", label: "О компании" },
+      { href: "/contacts", label: "Контакты" },
       { href: "https://webpractik.ai", label: "Вебпрактик AI" },
       { href: "https://t.me/Webpractik_Ai", label: "Канал Вебпрактик AI" },
     ],
