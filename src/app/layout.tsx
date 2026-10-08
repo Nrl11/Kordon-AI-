@@ -4,6 +4,7 @@ import Nav from "@/components/Nav";
 import SmoothScroll from "@/components/SmoothScroll";
 import CookieBanner from "@/components/CookieBanner";
 import { SITE_NAME, SITE_URL } from "@/lib/seo";
+import { CONTACTS } from "@/lib/site";
 import { brand, display, text } from "./fonts";
 import "./globals.css";
 
@@ -36,9 +37,16 @@ const JSON_LD = [
     description: "Корпоративный ИИ-шлюз: все запросы сотрудников и ИИ-агентов к нейросетям — через один шлюз в контуре компании.",
     parentOrganization: { "@type": "Organization", name: "ООО «Вебпрактик»", url: "https://webpractik.ru" },
     sameAs: ["https://webpractik.ai", "https://t.me/Webpractik_Ai"],
+    address: {
+      "@type": "PostalAddress",
+      addressLocality: "Москва",
+      streetAddress: "ул. Шаболовка, д. 34, стр. 3",
+      addressCountry: "RU",
+    },
     contactPoint: {
       "@type": "ContactPoint",
-      email: "ai@webpractik.ru",
+      email: CONTACTS.email,
+      telephone: CONTACTS.tel,
       contactType: "sales",
       availableLanguage: ["Russian"],
       areaServed: "RU",

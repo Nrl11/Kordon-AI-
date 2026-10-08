@@ -1,10 +1,12 @@
 import Link from "next/link";
-import { CTA, FOOTER } from "@/lib/site";
+import { CONTACTS, CTA, FOOTER, LEGAL, PRIVACY } from "@/lib/site";
 import { Logo } from "./Logo";
 import PageNotes from "./PageNotes";
 import ConsentLink from "./ConsentLink";
 import styles from "./Footer.module.css";
 
+/* Подвал: слева — знак, контакты и кнопка; справа — карта сайта;
+   внизу — реквизиты, политика и настройки cookie. */
 export default function Footer() {
   return (
     <footer className={styles.footer}>
@@ -12,6 +14,13 @@ export default function Footer() {
         <div className={styles.brand}>
           <Logo size={34} tone="dark" />
           <p>Один шлюз ко всем нейросетям</p>
+          <address className={styles.contacts}>
+            <a className={styles.phone} href={`tel:${CONTACTS.tel}`}>
+              {CONTACTS.phone}
+            </a>
+            <a href={`mailto:${CONTACTS.email}`}>{CONTACTS.email}</a>
+            <span>{CONTACTS.address}</span>
+          </address>
           <Link className="btn btn-primary btn-sm" href={CTA.href}>
             {CTA.label} <span className="arr" aria-hidden="true">→</span>
           </Link>
@@ -38,12 +47,13 @@ export default function Footer() {
         </nav>
         <PageNotes />
         <div className={styles.legal}>
-          <span>© 2026 ООО «Вебпрактик»</span>
+          <span>
+            © 2026 {LEGAL.name} · {`ИНН ${LEGAL.inn}`} · {`ОГРН ${LEGAL.ogrn}`}
+          </span>
           <span className={styles.legalLinks}>
-            <Link href="/privacy">Политика ПДн</Link>
+            <Link href={PRIVACY.href}>{PRIVACY.label}</Link>
             <ConsentLink className={styles.legalBtn} />
           </span>
-          <span>Кордон AI — корпоративный ИИ-шлюз в вашем контуре</span>
         </div>
       </div>
     </footer>

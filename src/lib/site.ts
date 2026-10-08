@@ -16,6 +16,20 @@ export const NAV = [
 
 export const CTA = { href: "/start", label: "Обсудить внедрение" } as const;
 
+/* контакты и реквизиты — как на webpractik.ru и webpractik.ai */
+export const CONTACTS = {
+  phone: "+7 495 540-51-79",
+  tel: "+74955405179",
+  email: "ai@webpractik.ru",
+  address: "Москва, ул. Шаболовка, д. 34, стр. 3",
+} as const;
+export const LEGAL = {
+  name: "ООО «Вебпрактик»",
+  inn: "6163109767",
+  ogrn: "1116195010711",
+} as const;
+export const PRIVACY = { href: "/privacy", label: "Политика обработки персональных данных" } as const;
+
 export const FOOTER = [
   {
     title: "Продукт",

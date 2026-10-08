@@ -21,6 +21,37 @@
   letter-spacing: -0.03em;
   color: var(--gold);
 }
+/* контакты: телефон крупно, почта и адрес тише */
+.contacts {
+  display: grid;
+  gap: 4px;
+  font-style: normal;
+  color: var(--on-ink-2);
+}
+.contacts a {
+  justify-self: start;
+  color: var(--on-ink);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+.contacts a:hover {
+  color: var(--gold-2);
+}
+.contacts a:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+.phone {
+  font-family: var(--f-display);
+  font-size: clamp(1.15rem, 1rem + 0.4vw, 1.35rem);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  font-variant-numeric: tabular-nums;
+}
+.contacts span {
+  font-size: var(--t-small);
+}
 .cols {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));

@@ -5,6 +5,7 @@ import { LogoMark } from "@/components/Logo";
 import { useSeen } from "@/components/ui/Reveal";
 import type { Focus } from "@/lib/lead";
 import { vars } from "@/lib/css";
+import { CONTACTS } from "@/lib/site";
 import { nb } from "@/lib/typo";
 import RequestForm from "./RequestForm";
 import styles from "./Request.module.css";
@@ -67,6 +68,13 @@ export default function Request() {
               </div>
             </div>
           </div>
+
+          {/* не хочется заполнять форму — напрямую */}
+          <address className={styles.direct}>
+            <span>Или напрямую</span>
+            <a href={`tel:${CONTACTS.tel}`}>{CONTACTS.phone}</a>
+            <a href={`mailto:${CONTACTS.email}`}>{CONTACTS.email}</a>
+          </address>
         </div>
         <div className={styles.card}>
           <RequestForm onCompany={setCompany} onSize={setSize} onFocus={setFocus} />

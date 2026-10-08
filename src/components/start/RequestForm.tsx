@@ -253,7 +253,7 @@ export default function RequestForm({
           <span>
             Согласен на обработку персональных данных по{" "}
             <a href="/privacy" target="_blank" rel="noopener">
-              политике
+              политике обработки персональных данных
             </a>
           </span>
         </label>
