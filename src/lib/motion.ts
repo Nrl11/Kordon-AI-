@@ -2,14 +2,16 @@
 
 import { useSyncExternalStore } from "react";
 import { gsap } from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
 
 if (typeof window !== "undefined") {
-  gsap.registerPlugin(ScrollTrigger, useGSAP);
+  gsap.registerPlugin(useGSAP);
+  /* анимации идут по реальному времени: после заминки браузера догоняют,
+     а не замедляются */
+  gsap.ticker.lagSmoothing(0);
 }
 
-export { gsap, ScrollTrigger, useGSAP };
+export { gsap, useGSAP };
 
 export const REDUCED = "(prefers-reduced-motion: reduce)";
 export const COMPACT = "(max-width: 1039px)";

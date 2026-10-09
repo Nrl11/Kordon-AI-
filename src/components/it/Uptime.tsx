@@ -96,20 +96,24 @@ export default function Uptime() {
   useEffect(() => {
     const el = stage.current;
     if (!el) return;
+    /* прогресс пишем только в линии и курсор, а не в корень сцены:
+       иначе каждый кадр пересчитываются стили всего блока */
+    const targets = [...el.querySelectorAll<HTMLElement | SVGElement>("[data-p]")];
+    const setP = (v: string) => targets.forEach((t) => t.style.setProperty("--p", v));
     if (!inView || matches(REDUCED)) {
-      el.style.setProperty("--p", "1");
+      setP("1");
       const id = requestAnimationFrame(() => setFailed(true));
       return () => cancelAnimationFrame(id);
     }
     let raf = 0;
     const t0 = performance.now();
     let hit = false;
-    el.style.setProperty("--p", "0");
+    setP("0");
     const id0 = requestAnimationFrame(() => setFailed(false));
     const tick = (now: number) => {
       const t = now - t0;
       const p = Math.min(1, t / RUN);
-      el.style.setProperty("--p", p.toFixed(4));
+      setP(p.toFixed(4));
       if (!hit && p >= c.x1) {
         hit = true;
         setFailed(true);
@@ -147,7 +151,7 @@ export default function Uptime() {
                   <small>{down ? "нет ответа" : up ? "резерв" : l.model}</small>
                 </div>
                 <div className={styles.track}>
-                  <svg viewBox="0 0 1000 40" preserveAspectRatio="none">
+                  <svg viewBox="0 0 1000 40" preserveAspectRatio="none" data-p="">
                     {l.parts.map((d, k) => d && <path key={k} className={styles.line} d={d} />)}
                     {l.gap && <path className={styles.gap} d={l.gap} />}
                   </svg>
@@ -166,7 +170,7 @@ export default function Uptime() {
               <small>один адрес — Кордон</small>
             </div>
             <div className={styles.track}>
-              <svg viewBox="0 0 1000 40" preserveAspectRatio="none">
+              <svg viewBox="0 0 1000 40" preserveAspectRatio="none" data-p="">
                 <path className={styles.line} d={app} />
               </svg>
               <span className={styles.switch} style={vars({ "--x": c.x1 })} data-on={failed || undefined}>
@@ -175,7 +179,7 @@ export default function Uptime() {
             </div>
           </div>
           <div className={styles.overlay}>
-            <i className={styles.cursor} />
+            <i className={styles.cursor} data-p="" />
           </div>
         </div>
       </div>

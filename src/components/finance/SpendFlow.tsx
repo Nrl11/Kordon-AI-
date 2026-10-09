@@ -53,12 +53,12 @@ function spread(ys: number[], min: number, top: number, bottom: number) {
 }
 
 function geometry(w: number) {
-  const h = 410;
+  const h = 332;
   const L = 250; // правый край подписей задач
   const R = w - 320; // полоса моделей, справа подписи
   const G = Math.round(L + (R - L) * 0.5);
-  const top = 62;
-  const usable = 300;
+  const top = 38;
+  const usable = 280;
   const gapL = 22;
   const gapR = 14;
   const all = TASKS.reduce((s, x) => s + x.t, 0);
@@ -115,8 +115,8 @@ function geometry(w: number) {
       my: ((a1 + gy) / 2 + n.y + n.h / 2) / 2 - n.h * 0.25,
     };
   });
-  const ly = spread(left.map((n) => n.y + n.h / 2), 52, 70, top + usable);
-  const ry = spread(right.map((n) => n.y + n.h / 2), 52, 70, top + usable + 20);
+  const ly = spread(left.map((n) => n.y + n.h / 2), 52, top + 8, top + usable);
+  const ry = spread(right.map((n) => n.y + n.h / 2), 52, top + 8, top + usable + 20);
   return { w, h, L, R, G, gateY, gateH, left, right, ins, outs, ly, ry };
 }
 
@@ -129,11 +129,12 @@ export default function SpendFlow() {
   const [n, setN] = useState(0);
   const [at, setAt] = useState<"task" | "gate" | "model">("task");
   const ex = EXAMPLES[n];
-  const dot = useRef<SVGCircleElement>(null);
+  /* точка — отдельный слой поверх схемы: двигается только transform,
+     схема под ней не перерисовывается */
+  const dot = useRef<HTMLSpanElement>(null);
   const paths = useRef<Record<string, SVGPathElement | null>>({});
-  /* лента под курсором или в фокусе: пока на неё смотрят, пример замирает */
+  /* лента под курсором или в фокусе подсвечивается; пример при этом идёт дальше */
   const [hot, setHot] = useState<Hot>(null);
-  const tlRef = useRef<gsap.core.Timeline | null>(null);
   const isHot = (side: "in" | "out", id: string) => hot?.side === side && hot.id === id;
   const point = (side: "in" | "out", id: string) => ({
     onMouseEnter: () => setHot({ side, id }),
@@ -141,20 +142,17 @@ export default function SpendFlow() {
   });
 
   useEffect(() => {
-    const tl = tlRef.current;
-    if (!tl) return;
-    if (hot) tl.pause();
-    else tl.resume();
-  }, [hot]);
-
-  useEffect(() => {
     const c = dot.current;
     const a = paths.current[`in-${ex.task}`];
     const b = paths.current[`out-${ex.model}`];
     if (!wide || !c || !a || !b) return;
+    const place = (x: number, y: number) => {
+      c.style.transform = `translate3d(${x.toFixed(1)}px, ${y.toFixed(1)}px, 0)`;
+    };
     if (!inView || matches(REDUCED)) {
       const end = b.getPointAtLength(b.getTotalLength());
-      gsap.set(c, { attr: { cx: end.x, cy: end.y }, opacity: 1 });
+      place(end.x, end.y);
+      gsap.set(c, { opacity: 1 });
       const id = requestAnimationFrame(() => setAt("model"));
       return () => cancelAnimationFrame(id);
     }
@@ -167,29 +165,29 @@ export default function SpendFlow() {
         ease: "power1.inOut",
         onUpdate: () => {
           const pt = p.getPointAtLength(o.t * L);
-          c.setAttribute("cx", String(pt.x));
-          c.setAttribute("cy", String(pt.y));
+          place(pt.x, pt.y);
         },
       });
     };
     const s = a.getPointAtLength(0);
+    const ga = a.getPointAtLength(a.getTotalLength());
     const gb = b.getPointAtLength(0);
+    const hop = { x: ga.x, y: ga.y };
     const tl = gsap.timeline({ onComplete: () => setN((x) => (x + 1) % EXAMPLES.length) });
-    tlRef.current = tl;
     tl.call(() => setAt("task"));
-    tl.set(c, { attr: { cx: s.x, cy: s.y }, opacity: 0 });
+    tl.set(c, { opacity: 0 });
+    tl.call(() => place(s.x, s.y));
     tl.to(c, { opacity: 1, duration: 0.25 });
     tl.add(run(a, 1.1));
     tl.call(() => setAt("gate"));
     /* в Кордоне задача получает модель и цену */
-    tl.to(c, { attr: { cx: gb.x, cy: gb.y }, duration: 0.6, ease: "power2.inOut" }, "+=0.35");
+    tl.to(hop, { x: gb.x, y: gb.y, duration: 0.6, ease: "power2.inOut", onUpdate: () => place(hop.x, hop.y) }, "+=0.35");
     tl.add(run(b, 1.1), "+=0.4");
     tl.call(() => setAt("model"));
     tl.to({}, { duration: 1.8 });
     tl.to(c, { opacity: 0, duration: 0.3 });
     return () => {
       tl.kill();
-      tlRef.current = null;
     };
   }, [n, inView, wide, ex.task, ex.model, width]);
 
@@ -220,13 +218,6 @@ export default function SpendFlow() {
         {wide ? (
           <div className={styles.canvas} style={{ height: g.h }} data-hover={hot ? "" : undefined}>
             <svg className={styles.svg} width={g.w} height={g.h} viewBox={`0 0 ${g.w} ${g.h}`} aria-hidden="true">
-              <text className={styles.zone} x={g.L} y={26} textAnchor="end">
-                Задачи
-              </text>
-              <text className={styles.zone} x={g.R} y={26}>
-                Модели и счёт за месяц
-              </text>
-
               {g.ins.map((r, i) => (
                 <g
                   key={r.id}
@@ -279,8 +270,8 @@ export default function SpendFlow() {
                 <path className={styles.markCore} d="M15 15H28" />
                 <circle className={styles.markDot} cx={15} cy={15} r={4} />
               </g>
-              <circle ref={dot} className={styles.dot} cx={-20} cy={-20} r={6} />
             </svg>
+            <span ref={dot} className={styles.dot} aria-hidden="true" />
 
             {g.left.map((s, k) => (
               <div

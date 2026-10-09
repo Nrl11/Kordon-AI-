@@ -21,17 +21,6 @@
   color: var(--ink);
 }
 
-.label {
-  position: absolute;
-  left: 22px;
-  bottom: 16px;
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.55);
-}
-
 /* счета вразнобой: разные источники, валюты и карты */
 .bill {
   position: absolute;

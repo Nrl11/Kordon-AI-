@@ -15,13 +15,6 @@
   top: 0;
   overflow: visible;
 }
-.zone {
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  fill: var(--ink-3);
-}
 
 /* слева счета вразнобой — серые ленты; справа отчёт по командам — синие */
 .ribbonIn path:first-child {
@@ -143,11 +136,20 @@
 .markDot {
   fill: var(--gold);
 }
+/* точка запроса: свой слой, двигается только transform */
 .dot {
-  fill: var(--gold);
-  stroke: var(--paper-2);
-  stroke-width: 3;
-  paint-order: stroke;
+  position: absolute;
+  left: -6px;
+  top: -6px;
+  z-index: 1;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--gold);
+  box-shadow: 0 0 0 3px var(--paper-2);
+  opacity: 0;
+  pointer-events: none;
+  will-change: transform, opacity;
 }
 
 /* подписи */

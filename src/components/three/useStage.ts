@@ -49,6 +49,7 @@ export function useStage<S extends Stage>(
       raf = 0;
       const s = stageRef.current;
       if (!s || !visible || disposed) return;
+      /* рисуем на частоте экрана: пропуск кадров на 120–144 Гц даёт рваный шаг */
       const raw = last ? (now - last) / 1000 : 0.016;
       const dt = Math.min(raw, 0.1);
       last = now;

@@ -89,18 +89,27 @@ function HeroScheme() {
   const create = useCallback(async (canvas: HTMLCanvasElement, ctx: { reduced: boolean }) => {
     const { createHeroScene } = await import("./heroScene");
     const scene = createHeroScene(canvas, { reduced: ctx.reduced, onPhase: (s, p) => onPhaseRef.current(s, p) });
-    /* подписи двигаем вместе с кадром, без перерисовки React */
+    /* подписи двигаем вместе с кадром, без перерисовки React; в DOM пишем
+       только то, что изменилось с прошлого кадра */
     const frame = scene.frame;
+    const lastPos: string[] = [];
+    const lastFlags: number[] = [];
     scene.frame = (t, dt) => {
       const more = frame(t, dt);
       scene.labels.forEach((l, i) => {
         const el = labelRefs.current[i];
         if (!el) return;
-        el.style.transform = `translate3d(${l.x.toFixed(1)}px, ${l.y.toFixed(1)}px, 0)`;
-        if (l.on) el.dataset.on = "";
-        else delete el.dataset.on;
-        if (l.hide) el.dataset.hide = "";
-        else delete el.dataset.hide;
+        const pos = `translate3d(${l.x.toFixed(1)}px, ${l.y.toFixed(1)}px, 0)`;
+        if (lastPos[i] !== pos) {
+          lastPos[i] = pos;
+          el.style.transform = pos;
+        }
+        const flags = (l.on ? 1 : 0) | (l.hide ? 2 : 0);
+        if (lastFlags[i] !== flags) {
+          lastFlags[i] = flags;
+          el.toggleAttribute("data-on", l.on);
+          el.toggleAttribute("data-hide", l.hide);
+        }
       });
       /* подписи показываем только после первого кадра — до него они стоят в углу */
       const box = labelsBox.current;

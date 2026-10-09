@@ -1,7 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import Footer from "@/components/Footer";
 import Nav from "@/components/Nav";
-import SmoothScroll from "@/components/SmoothScroll";
+import OffscreenPause from "@/components/OffscreenPause";
 import CookieBanner from "@/components/CookieBanner";
 import { SITE_NAME, SITE_URL } from "@/lib/seo";
 import { CONTACTS } from "@/lib/site";
@@ -67,12 +67,12 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="ru" className={`${display.variable} ${text.variable} ${brand.variable}`}>
+    <html lang="ru" data-scroll-behavior="smooth" className={`${display.variable} ${text.variable} ${brand.variable}`}>
       <body>
         <a className="skip-link" href="#main">
           Перейти к содержанию
         </a>
-        <SmoothScroll />
+        <OffscreenPause />
         <Nav />
         <main id="main">{children}</main>
         <Footer />

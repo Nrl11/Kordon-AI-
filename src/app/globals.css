@@ -143,18 +143,17 @@ button {
 }
 
 /* Lenis */
-html.lenis,
-html.lenis body {
-  height: auto;
+/* прокрутка — родная браузерная: плавно только к якорям */
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
 }
-.lenis.lenis-smooth {
-  scroll-behavior: auto !important;
-}
-.lenis.lenis-smooth [data-lenis-prevent] {
-  overscroll-behavior: contain;
-}
-.lenis.lenis-stopped {
-  overflow: hidden;
+/* блок, ушедший за экран, не тратит кадры на свои CSS-анимации */
+[data-offscreen] *,
+[data-offscreen] *::before,
+[data-offscreen] *::after {
+  animation-play-state: paused !important;
 }
 
 /* ——— каркас ——— */

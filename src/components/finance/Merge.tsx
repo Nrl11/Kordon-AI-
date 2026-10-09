@@ -78,7 +78,6 @@ export default function Merge() {
     const report = el.querySelector<HTMLElement>("[data-report]");
     const rows = el.querySelectorAll<HTMLElement>("[data-row]");
     const gate = el.querySelector<HTMLElement>("[data-gate]");
-    const labels = el.querySelectorAll<HTMLElement>("[data-label]");
     if (!report || !gate) return;
 
     const final = () => {
@@ -87,8 +86,6 @@ export default function Merge() {
       gsap.set(report, { opacity: 1, scale: 1, y: 0 });
       gsap.set(rows, { opacity: 1, y: 0 });
       gsap.set(el.querySelectorAll("[data-bar]"), { scaleX: 1 });
-      gsap.set(labels[0], { opacity: 0 });
-      gsap.set(labels[1], { opacity: 1 });
     };
     if (!inView || matches(REDUCED)) {
       final();
@@ -103,8 +100,6 @@ export default function Merge() {
     tl.set(el.querySelectorAll("[data-bar]"), { scaleX: 0 });
     tl.set(gate, { opacity: 0, scale: 0.6 });
     tl.set(bills, { opacity: 0, x: 0, y: 8, scale: 1 });
-    tl.set(labels[0], { opacity: 1 });
-    tl.set(labels[1], { opacity: 0 });
     /* счета появляются вразнобой */
     tl.to(bills, { opacity: 1, y: 0, duration: 0.45, ease: "power2.out", stagger: { each: 0.12, from: "random" } });
     tl.to({}, { duration: 1.4 });
@@ -116,11 +111,9 @@ export default function Merge() {
       const by = Number(b.dataset.y) + b.offsetHeight / 2;
       tl.to(b, { x: cx - bx, y: cy - by, scale: 0.25, opacity: 0, duration: 0.6, ease: "power2.in" }, `merge+=${k * 0.07}`);
     });
-    tl.to(labels[0], { opacity: 0, duration: 0.3 }, "merge");
     tl.to(gate, { scale: 1.25, opacity: 0, duration: 0.4, ease: "power2.in" }, ">-0.1");
     /* и собирается один отчёт */
     tl.to(report, { opacity: 1, scale: 1, y: 0, duration: 0.55, ease: "power3.out" }, ">-0.15");
-    tl.to(labels[1], { opacity: 1, duration: 0.3 }, "<");
     tl.to(rows, { opacity: 1, y: 0, duration: 0.35, stagger: 0.08 }, "<+0.15");
     tl.to(el.querySelectorAll("[data-bar]"), { scaleX: 1, duration: 0.7, ease: "power2.out", stagger: 0.08 }, "<+0.1");
     tl.to({}, { duration: 4.2 });
@@ -140,13 +133,6 @@ export default function Merge() {
           style={{ width: DW, height: DH, transform: `translateX(-50%) scale(${scale})` }}
           aria-hidden="true"
         >
-          <span className={styles.label} data-label="">
-            Сейчас: счета вразнобой
-          </span>
-          <span className={styles.label} data-label="" style={{ opacity: 0 }}>
-            С Кордоном: один отчёт
-          </span>
-
           {BILLS.map((b, k) => (
             <div
               key={b.t}

@@ -1,127 +1,22 @@
-.wrap {
+/* одна широкая карточка: легенда сверху, график с пояснениями на точках */
+.card {
   display: grid;
-  grid-template-columns: minmax(0, 1.5fr) minmax(0, 0.5fr);
-  gap: 14px;
-}
-.chart {
-  display: grid;
-  gap: 10px;
+  gap: clamp(10px, 1.6vh, 16px);
   margin: 0;
-  padding: clamp(16px, 2vw, 26px);
-  border-radius: 24px;
-  background: var(--paper);
+  padding: clamp(18px, 2.4vw, 32px) clamp(16px, 2.4vw, 36px) clamp(14px, 2vw, 24px);
+  border-radius: 28px;
+  background:
+    radial-gradient(40% 60% at 85% 0%, rgba(224, 176, 74, 0.1), transparent 70%),
+    var(--paper);
   box-shadow:
     0 0 0 1px var(--rule),
-    0 24px 48px -40px rgba(11, 19, 36, 0.35);
-}
-.chart svg {
-  width: 100%;
-  height: auto;
-  font-family: var(--f-text);
-}
-.paid {
-  fill: var(--blue-soft);
-}
-.check {
-  stroke: var(--rule-2);
-  stroke-width: 1;
-  stroke-dasharray: 3 4;
-}
-.axis {
-  stroke: var(--ink);
-  stroke-width: 1;
-}
-.tick {
-  font-size: 12px;
-  font-weight: 600;
-  fill: var(--ink-3);
-}
-.tier {
-  fill: none;
-  stroke: var(--blue);
-  stroke-width: 2.5;
-  stroke-linejoin: round;
-}
-.users {
-  fill: none;
-  stroke: var(--ink);
-  stroke-width: 2.5;
-  stroke-linejoin: round;
-  stroke-linecap: round;
-}
-.lbl {
-  font-size: 12.5px;
-  font-weight: 700;
-  fill: var(--blue-ink);
-}
-.lblUsers {
-  font-size: 12.5px;
-  font-weight: 700;
-  fill: var(--ink);
-}
-.dot circle {
-  fill: var(--ink);
-  stroke: var(--paper);
-  stroke-width: 3;
-}
-.dot text {
-  font-size: 12px;
-  font-weight: 800;
-  fill: var(--gold-2);
-}
-
-/* прорисовка при появлении */
-@media (scripting: enabled) and (prefers-reduced-motion: no-preference) {
-  .users {
-    stroke-dasharray: 1;
-    stroke-dashoffset: 1;
-    transition: stroke-dashoffset 1.6s var(--ease-in-out) 0.2s;
-  }
-  .in .users {
-    stroke-dashoffset: 0;
-  }
-  .dot {
-    opacity: 0;
-    transition: opacity 0.4s;
-  }
-  .in .dot {
-    opacity: 1;
-  }
-  .in .dot:nth-of-type(1) {
-    transition-delay: 0.9s;
-  }
-  .in .dot:nth-of-type(2) {
-    transition-delay: 1.3s;
-  }
-  .in .dot:nth-of-type(3) {
-    transition-delay: 1.7s;
-  }
-  .notes li {
-    opacity: 0;
-    transform: translateY(8px);
-    transition:
-      opacity 0.5s var(--ease-out),
-      transform 0.5s var(--ease-out);
-  }
-  .in .notes li {
-    opacity: 1;
-    transform: none;
-  }
-  .in .notes li:nth-child(1) {
-    transition-delay: 0.9s;
-  }
-  .in .notes li:nth-child(2) {
-    transition-delay: 1.3s;
-  }
-  .in .notes li:nth-child(3) {
-    transition-delay: 1.7s;
-  }
+    0 40px 80px -60px rgba(11, 19, 36, 0.4);
 }
 
 .legend {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px 20px;
+  gap: 6px 22px;
   font-size: 0.875rem;
   color: var(--ink-2);
 }
@@ -132,59 +27,278 @@
 }
 .legend span::before {
   content: "";
-  width: 18px;
+  width: 20px;
   height: 12px;
   border-radius: 3px;
 }
 .legend span[data-k="tier"]::before {
-  background: var(--blue-soft);
-  box-shadow: inset 0 2px 0 var(--blue);
+  background: linear-gradient(rgba(42, 71, 214, 0.16), rgba(42, 71, 214, 0.04));
+  box-shadow: inset 0 3px 0 var(--blue);
 }
 .legend span[data-k="buf"]::before {
-  background: repeating-linear-gradient(135deg, var(--gold) 0 2px, var(--gold-soft) 2px 5px);
+  background: linear-gradient(rgba(224, 176, 74, 0.08), rgba(224, 176, 74, 0.45));
+  box-shadow: inset 0 1.5px 0 var(--gold);
 }
 .legend span[data-k="users"]::before {
   height: 3px;
+  border-radius: 2px;
   background: var(--ink);
 }
 
-.notes {
+/* график и HTML-пояснения поверх него в одних координатах */
+.plot {
+  position: relative;
+}
+.plot svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+  font-family: var(--f-text);
+}
+.band {
+  fill: var(--paper-2);
+}
+.check {
+  stroke: var(--ink-3);
+  stroke-width: 1;
+  stroke-dasharray: 4 5;
+  opacity: 0.6;
+}
+.axis {
+  stroke: var(--ink);
+  stroke-width: 1.5;
+}
+.tick {
+  font-size: 14px;
+  font-weight: 700;
+  fill: var(--ink-3);
+  font-variant-numeric: tabular-nums;
+}
+.year {
+  font-size: 15px;
+  font-weight: 700;
+  fill: var(--ink-2);
+}
+.tier {
+  fill: none;
+  stroke: var(--blue);
+  stroke-width: 4;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+.tierLbl {
+  font-family: var(--f-display);
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  fill: var(--blue-ink);
+}
+.bufEdge {
+  fill: none;
+  stroke: var(--gold);
+  stroke-width: 1.5;
+  stroke-dasharray: 5 4;
+}
+.users {
+  fill: none;
+  stroke-width: 4;
+  stroke-linecap: round;
+}
+.dot {
+  fill: var(--paper);
+  stroke: var(--ink);
+  stroke-width: 3.5;
+}
+.dot[data-tone="ok"] {
+  stroke: var(--gold-deep);
+}
+.dot[data-tone="up"] {
+  stroke: var(--blue);
+}
+.head {
+  fill: var(--ink);
+  stroke: var(--paper);
+  stroke-width: 3;
+}
+
+/* пояснение у точки сверки: белая карточка с тонким хвостиком */
+.callout {
+  position: absolute;
   display: grid;
-  align-content: start;
-  gap: 10px;
+  gap: 2px;
+  width: min(250px, 27%);
+  padding: 10px 14px;
+  border-radius: 14px;
+  background: var(--paper);
+  box-shadow:
+    0 0 0 1px var(--rule),
+    0 18px 36px -20px rgba(11, 19, 36, 0.45);
+  font-size: 0.8125rem;
+  line-height: 1.35;
+  color: var(--ink-2);
+}
+.callout b {
+  font-family: var(--f-display);
+  font-size: 0.9375rem;
+  color: var(--ink);
+}
+.callout[data-tone="ok"] {
+  border-top: 3px solid var(--gold);
+}
+.callout[data-tone="up"] {
+  border-top: 3px solid var(--blue);
+}
+/* «на ножке»: карточка поднята над точкой, к точке спускается линия */
+.callout[data-side="pin"] {
+  transform: translate(calc(-100% + 20px), calc(-100% - 62px));
+}
+.callout[data-side="pin"]::after {
+  content: "";
+  position: absolute;
+  right: 19.5px;
+  top: 100%;
+  width: 1.5px;
+  height: 54px;
+  background: var(--gold-deep);
+}
+.callout[data-side="upleft"] {
+  transform: translate(calc(-100% - 10px), calc(-100% - 14px));
+}
+
+/* над третьим годом */
+.fixed {
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  padding: 7px 14px;
+  border-radius: 999px;
+  background: var(--ink);
+  color: #ffffff;
+  font-size: clamp(0.75rem, 0.95vw, 0.8125rem);
+  font-weight: 700;
+  line-height: 1.3;
+  text-align: center;
+  text-wrap: balance;
+  transform: translateY(-50%);
+}
+
+/* список пояснений — только на узком экране */
+.list {
+  display: none;
+  gap: 8px;
   margin: 0;
   padding: 0;
   list-style: none;
 }
-.notes li {
+.list li {
   display: grid;
-  grid-template-columns: 14px minmax(0, 1fr);
-  gap: 12px;
-  padding: 14px 16px;
-  border-radius: 18px;
-  background: var(--paper);
-  box-shadow: 0 0 0 1px var(--rule);
-}
-/* точка — как отметка на графике */
-.notes li > span {
-  width: 14px;
-  height: 14px;
-  margin-top: 5px;
-  border-radius: 50%;
-  background: var(--ink);
-  box-shadow: 0 0 0 3px var(--gold-soft);
-}
-.notes b {
-  font-family: var(--f-display);
-  font-size: 1.0625rem;
-}
-.notes p {
-  font-size: 0.9375rem;
+  gap: 2px;
+  padding: 10px 14px;
+  border-radius: 14px;
+  background: var(--paper-2);
+  border-left: 3px solid var(--ink);
+  font-size: 0.875rem;
   color: var(--ink-2);
 }
+.list li[data-tone="ok"] {
+  border-left-color: var(--gold);
+}
+.list li[data-tone="up"] {
+  border-left-color: var(--blue);
+}
+.list b {
+  font-family: var(--f-display);
+  color: var(--ink);
+}
 
-@media (max-width: 1000px) {
-  .wrap {
-    grid-template-columns: minmax(0, 1fr);
+/* появление: ступень и заливка проступают, кривая прорисовывается,
+   пояснения всплывают, когда кривая доходит до сверки */
+@media (scripting: enabled) and (prefers-reduced-motion: no-preference) {
+  .fill,
+  .buf {
+    opacity: 0;
+    transition: opacity 0.8s var(--ease-out) 0.1s;
+  }
+  .tier {
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+    transition: stroke-dashoffset 1.2s var(--ease-in-out) 0.1s;
+  }
+  .users {
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+    transition: stroke-dashoffset 1.8s var(--ease-in-out) 0.5s;
+  }
+  .dot,
+  .head,
+  .callout,
+  .fixed {
+    opacity: 0;
+    transition: opacity 0.45s var(--ease-out);
+  }
+  .dot,
+  .callout {
+    transition-delay: calc(1.1s + var(--k) * 0.55s);
+  }
+  .head {
+    transition-delay: 2.2s;
+  }
+  .fixed {
+    transition-delay: 2.4s;
+  }
+  .in .fill,
+  .in .buf,
+  .in .dot,
+  .in .head,
+  .in .callout,
+  .in .fixed {
+    opacity: 1;
+  }
+  .in .tier,
+  .in .users {
+    stroke-dashoffset: 0;
+  }
+}
+
+/* уже 1000 px пояснения не помещаются у точек — уходят списком под график */
+@media (max-width: 999px) {
+  .callout,
+  .fixed {
+    display: none;
+  }
+  .list {
+    display: grid;
+  }
+  .tierLbl {
+    font-size: 22px;
+  }
+  .tick,
+  .year {
+    font-size: 20px;
+  }
+}
+/* телефон: график втрое меньше — крупнее оси и линии, подписи ступеней
+   убираем (их значения уже на оси) */
+@media (max-width: 560px) {
+  .tierLbl {
+    display: none;
+  }
+  .tick,
+  .year {
+    font-size: 34px;
+  }
+  .year {
+    transform: translateY(8px);
+  }
+  .tier,
+  .users {
+    stroke-width: 7;
+  }
+  .dot {
+    stroke-width: 6;
+  }
+  .bufEdge {
+    stroke-width: 3;
   }
 }

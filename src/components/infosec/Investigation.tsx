@@ -28,7 +28,13 @@ export default function Investigation() {
       const id = requestAnimationFrame(() => setN(QUERY.length));
       return () => cancelAnimationFrame(id);
     }
-    const t = window.setInterval(() => setN((x) => (x >= QUERY.length ? x : x + 1)), 80);
+    /* печатаем по букве; когда запрос набран, таймер останавливается */
+    let k = 0;
+    const t = window.setInterval(() => {
+      k += 1;
+      setN(k);
+      if (k >= QUERY.length) window.clearInterval(t);
+    }, 80);
     return () => window.clearInterval(t);
   }, [seen]);
 

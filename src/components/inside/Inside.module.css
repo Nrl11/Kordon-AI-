@@ -614,7 +614,8 @@
   padding: 10px 12px;
   border-radius: 12px;
   background: rgba(255, 255, 255, 0.03);
-  opacity: 0.28;
+  /* решение ещё не принято — ячейка тише, но текст читается */
+  opacity: 0.55;
   transform: translateX(10px);
   transition:
     opacity 0.45s var(--ease-out),
@@ -641,6 +642,7 @@
   font-size: 0.875rem;
   font-weight: 600;
   line-height: 1.35;
+  color: #ffffff;
   overflow-wrap: break-word;
 }
 .panel li b::before {
