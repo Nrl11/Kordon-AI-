@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 
 /* Базовое SEO: один адрес сайта, канонические ссылки, превью для мессенджеров.
-   Боевой домен задаётся переменной NEXT_PUBLIC_SITE_URL в Vercel. */
+   Боевой домен задаётся переменной NEXT_PUBLIC_SITE_URL при сборке
+   (см. docs/deploy.md). */
 
 export const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || "https://kordon-ai.vercel.app").replace(/\/+$/, "");
 export const SITE_NAME = "Кордон AI";
