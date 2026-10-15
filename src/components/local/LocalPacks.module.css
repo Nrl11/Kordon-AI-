@@ -1,0 +1,375 @@
+/* one card: dark market list on the left (like the admin portal sidebar),
+   the request and the market profile on the right */
+.stage {
+  display: grid;
+  grid-template-columns: minmax(230px, 0.3fr) minmax(0, 1fr);
+  border-radius: 28px;
+  background: var(--paper);
+  box-shadow:
+    0 0 0 1px var(--rule),
+    0 40px 80px -60px rgba(11, 19, 36, 0.45);
+  overflow: hidden;
+}
+
+.label {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 12px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+/* ——— markets ——— */
+.markets {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: clamp(18px, 2.4vw, 28px) clamp(14px, 1.6vw, 20px);
+  background: var(--ink);
+  color: var(--on-ink);
+}
+.markets .label {
+  padding-inline: 12px;
+  color: var(--on-ink-2);
+}
+.list {
+  display: grid;
+  gap: 2px;
+}
+/* one row per market: the name on the left, its law on the right */
+.market {
+  position: relative;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 12px 11px;
+  border: 0;
+  border-radius: 12px;
+  background: transparent;
+  color: var(--on-ink-2);
+  text-align: left;
+  overflow: hidden;
+  transition:
+    background-color 0.25s,
+    color 0.25s;
+}
+.market:hover {
+  color: #ffffff;
+}
+.market b {
+  font-family: var(--f-display);
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+.market span {
+  font-size: 0.8125rem;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+.market[aria-selected="true"] {
+  background: rgba(255, 255, 255, 0.07);
+  color: #ffffff;
+}
+.market[aria-selected="true"] span {
+  color: var(--gold-2);
+}
+/* how long until the next market: a thin gold line fills along the bottom */
+.timer {
+  position: absolute;
+  left: 12px;
+  right: 12px;
+  bottom: 0;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--gold);
+  transform-origin: left;
+  transform: scaleX(0);
+  animation: fill 7.6s linear forwards paused;
+}
+.timer[data-run] {
+  animation-play-state: running;
+}
+@keyframes fill {
+  to {
+    transform: scaleX(1);
+  }
+}
+
+.foot {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: auto;
+  padding: 8px 12px 0;
+}
+.more {
+  max-width: 24ch;
+  font-size: 0.8125rem;
+  line-height: 1.45;
+  color: var(--on-ink-2);
+}
+.pause {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 50%;
+  background: transparent;
+  color: var(--on-ink-2);
+}
+.pause:hover {
+  color: #ffffff;
+}
+
+/* ——— request and profile ——— */
+.panel {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(14px, 2.2vh, 22px);
+  min-width: 0;
+  padding: clamp(20px, 2.6vw, 36px) clamp(20px, 3vw, 44px);
+}
+.status {
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--ink-3);
+  transition: color 0.3s;
+}
+.status[data-phase="1"] {
+  color: var(--red);
+}
+.status[data-phase="2"],
+.status[data-phase="3"] {
+  color: var(--gold-ink);
+}
+
+/* the request: word by word, as it was written; tiles never wrap inside */
+.sentence {
+  --px: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  column-gap: 0.26em;
+  /* room for the labels above found pieces when a line wraps */
+  row-gap: 30px;
+  /* two lines reserved: when placeholders shorten the text, nothing below jumps */
+  min-height: calc(2.4em + 30px + 24px);
+  padding-top: 24px;
+  font-family: var(--f-display);
+  font-size: clamp(1.4rem, min(0.85rem + 1.4vw, 0.6rem + 3vh), 2.15rem);
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+}
+.word,
+.tile {
+  position: relative;
+  display: inline-block;
+  white-space: nowrap;
+  animation: rise 0.5s var(--ease-out) both;
+  animation-delay: calc(var(--k) * 40ms);
+}
+@keyframes rise {
+  from {
+    opacity: 0;
+    translate: 0 14px;
+  }
+}
+.word[data-glue] {
+  margin-left: -0.26em;
+}
+/* a piece and the punctuation after it — one unbreakable unit */
+.pair {
+  display: inline-flex;
+  align-items: baseline;
+  max-width: 100%;
+  white-space: nowrap;
+}
+.pair .word[data-glue] {
+  margin-left: 0;
+}
+.sentence:not([data-phase="0"]) .word {
+  color: var(--ink-3);
+  transition: color 0.4s;
+}
+.tile {
+  border-radius: 10px;
+  transition:
+    background-color 0.35s,
+    color 0.35s,
+    padding 0.35s;
+}
+/* found: personal data turns red and gets its local label */
+.tile[data-hit] {
+  padding: 0 var(--px);
+  background: var(--red);
+  color: #ffffff;
+}
+/* masked: a gold placeholder that hugs its own text and sits on the line */
+.tile[data-masked] {
+  padding: 0.02em var(--px) 0.06em;
+  background: var(--gold);
+  color: var(--ink);
+}
+.token {
+  display: inline-block;
+  font-size: 0.8em;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  animation: turn 0.45s var(--ease-out) both;
+}
+@keyframes turn {
+  from {
+    opacity: 0;
+    transform: perspective(400px) rotateX(90deg);
+  }
+}
+.tag {
+  position: absolute;
+  left: 0;
+  bottom: calc(100% + 6px);
+  padding: 2px 8px;
+  border-radius: 6px;
+  background: var(--red-soft);
+  font: 700 0.6875rem/1.4 var(--f-text);
+  font-style: normal;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--red);
+  opacity: 0;
+  translate: 0 6px;
+  transition:
+    opacity 0.3s,
+    translate 0.3s var(--ease-out);
+  pointer-events: none;
+}
+.tile[data-hit]:not([data-masked]) .tag {
+  opacity: 1;
+  translate: none;
+}
+
+/* the market profile: four decisions in a row, label above value */
+.rows {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+  margin: 0;
+}
+.rows div {
+  display: grid;
+  align-content: start;
+  gap: 3px;
+  min-width: 0;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: var(--paper-2);
+  opacity: 0.45;
+  transform: translateY(6px);
+  transition:
+    opacity 0.45s var(--ease-out),
+    transform 0.45s var(--ease-out),
+    background-color 0.45s;
+  transition-delay: calc(var(--k) * 90ms);
+}
+.rows div[data-on] {
+  opacity: 1;
+  transform: none;
+  background: var(--blue-soft);
+}
+.rows dt {
+  font-size: 0.75rem;
+  color: var(--ink-3);
+}
+.rows dd {
+  margin: 0;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  line-height: 1.35;
+  color: var(--ink);
+  overflow-wrap: break-word;
+}
+
+/* the difference, stated once — at the bottom of the card */
+.note {
+  max-width: 70ch;
+  margin-top: auto;
+  padding-top: clamp(10px, 1.6vh, 16px);
+  border-top: 1px solid var(--rule);
+  font-size: 0.9375rem;
+  line-height: 1.5;
+  color: var(--ink-2);
+}
+
+@media (max-width: 1100px) {
+  .rows {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 860px) {
+  /* narrow: markets become a grid of buttons above the request */
+  .stage {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .list {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 4px;
+  }
+  /* in a grid cell the name and the law stack instead of sharing a row */
+  .market {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1px;
+  }
+  .market span {
+    text-align: left;
+  }
+  .more {
+    max-width: none;
+  }
+}
+@media (max-width: 560px) {
+  .list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .market b {
+    font-size: 0.9375rem;
+  }
+  .sentence {
+    --px: 7px;
+  }
+  /* a long ID (an IBAN) may wrap inside its plate instead of running off the card */
+  .tile:not([data-masked]) {
+    min-width: 0;
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+  .rows {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .word,
+  .tile,
+  .token {
+    animation: none;
+  }
+  .timer {
+    display: none;
+  }
+  .tile,
+  .tag,
+  .rows div {
+    transition: none;
+  }
+}

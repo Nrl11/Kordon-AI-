@@ -1,0 +1,25 @@
+.logo {
+  display: inline-flex;
+  align-items: center;
+  gap: calc(var(--s) * 0.45);
+  color: var(--ink);
+}
+.logo[data-tone="dark"] {
+  color: var(--on-ink);
+}
+
+.word {
+  font-family: var(--f-brand);
+  font-weight: 600;
+  font-size: calc(var(--s) * 0.74);
+  line-height: 1;
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+}
+
+.ai {
+  color: var(--gold-ink);
+}
+.logo[data-tone="dark"] .ai {
+  color: var(--gold);
+}

@@ -1,0 +1,71 @@
+.band {
+  padding: clamp(40px, 7vh, 88px) 0;
+  scroll-margin-top: 80px;
+}
+/* dark band: the mark, the pitch and one button — to the shared request form */
+.card {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: clamp(20px, 3vw, 48px);
+  padding: clamp(28px, 4vw, 52px);
+  border-radius: 32px;
+  background: var(--ink);
+  color: var(--on-ink);
+  overflow: hidden;
+}
+/* gold glow from the core — as in the mark */
+.card::after {
+  content: "";
+  position: absolute;
+  right: -10%;
+  top: -60%;
+  width: 60%;
+  height: 220%;
+  background: radial-gradient(closest-side, rgba(224, 176, 74, 0.16), transparent);
+  pointer-events: none;
+}
+.mark,
+.copy,
+.action {
+  position: relative;
+  z-index: 1;
+}
+.copy h2 {
+  font-family: var(--f-display);
+  font-weight: 700;
+  font-size: clamp(1.6rem, 1rem + 1.8vw, 2.6rem);
+  line-height: 1.05;
+  letter-spacing: -0.035em;
+  color: #ffffff;
+  text-wrap: balance;
+}
+.copy p {
+  max-width: 52ch;
+  margin-top: 10px;
+  color: var(--on-ink-2);
+  text-wrap: pretty;
+}
+.action:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 3px;
+}
+
+@media (max-width: 900px) {
+  .card {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+  .action {
+    grid-column: 1 / -1;
+    justify-self: start;
+  }
+}
+@media (max-width: 560px) {
+  .card {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .action {
+    width: 100%;
+  }
+}
