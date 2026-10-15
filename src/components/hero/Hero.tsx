@@ -9,8 +9,15 @@ import { CTA } from "@/lib/site";
 import { HERO_VIDEO } from "@/lib/media";
 import { nb } from "@/lib/typo";
 import { DEPTS, STORIES, destName, type Phase } from "./flow";
-import { HERO_LABELS, type HeroScene } from "./heroScene";
+import { HERO_LABELS } from "./heroLayout";
+import type { HeroScene } from "./heroScene";
 import styles from "./Hero.module.css";
+
+/* The 3D scene with three.js is a separate chunk: the page hydrates without
+   waiting for it, and the download starts as soon as this module runs in the
+   browser — in parallel with hydration, not after it. */
+const loadScene = () => import("./heroScene");
+if (typeof window !== "undefined" && !HERO_VIDEO) void loadScene();
 
 /* First screen: the pitch on the left, a live product diagram on the right
    (or a video, once it is ready). Under the diagram is the ticket for the
@@ -89,7 +96,7 @@ function HeroScheme() {
   const onPhaseRef = useRef(onPhase);
 
   const create = useCallback(async (canvas: HTMLCanvasElement, ctx: { reduced: boolean }) => {
-    const { createHeroScene } = await import("./heroScene");
+    const { createHeroScene } = await loadScene();
     const scene = createHeroScene(canvas, { reduced: ctx.reduced, onPhase: (s, p) => onPhaseRef.current(s, p) });
     /* labels move with each frame without a React re-render; only what
        changed since the last frame is written to the DOM */

@@ -25,58 +25,71 @@
   border-bottom: 1px solid var(--on-ink-rule);
 }
 
-/* the steps are a real sequence */
+/* The steps are the request's path, not tabs: a rail with a dot per step.
+   The line fills gold behind the request, the current dot has a halo, the
+   steps ahead are hollow. No underline and no bold — those belong to the
+   example tabs on the right, which can be clicked. */
 .steps {
   display: flex;
   flex-wrap: wrap;
-  /* items don't stretch to the line height — the underline sits right under the word */
-  align-items: flex-start;
-  align-content: flex-start;
-  gap: 6px 22px;
+  align-items: center;
+  gap: 8px 0;
   margin: 0;
   padding: 0;
   list-style: none;
+  cursor: default;
+  user-select: none;
 }
 .steps li {
   position: relative;
   display: inline-flex;
-  align-items: baseline;
+  align-items: center;
   gap: 8px;
-  padding-bottom: 8px;
-  font-size: 0.9375rem;
-  font-weight: 600;
-  color: rgba(255, 255, 255, 0.35);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.5);
   transition: color 0.3s;
 }
-.steps li::after {
+/* the stretch of rail from the previous step: gold once the request has passed */
+.steps li + li::before {
   content: "";
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  flex: none;
+  width: clamp(14px, 1.8vw, 26px);
   height: 2px;
-  border-radius: 2px;
-  background: var(--gold);
-  transform-origin: left;
-  transform: scaleX(0);
-  transition: transform 0.45s var(--ease-out);
+  margin-left: 4px;
+  border-radius: 1px;
+  background:
+    linear-gradient(var(--gold), var(--gold)) left / 0% 100% no-repeat,
+    rgba(255, 255, 255, 0.14);
+  transition: background-size 0.45s var(--ease-out);
+}
+.steps li[data-done]::before,
+.steps li[data-on]::before {
+  background-size: 100% 100%;
+}
+.dot {
+  flex: none;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, 0.32);
+  transition:
+    background-color 0.3s,
+    box-shadow 0.3s;
 }
 .steps li[data-done] {
-  color: rgba(255, 255, 255, 0.6);
+  color: rgba(255, 255, 255, 0.7);
+}
+.steps li[data-done] .dot {
+  background: var(--gold);
+  box-shadow: none;
 }
 .steps li[data-on] {
   color: #ffffff;
 }
-.steps li[data-on]::after {
-  transform: scaleX(1);
-}
-.num {
-  font: 600 0.75rem/1 var(--f-text);
-  font-variant-numeric: tabular-nums;
-  color: rgba(255, 255, 255, 0.35);
-}
-.steps li[data-on] .num {
-  color: var(--gold);
+.steps li[data-on] .dot {
+  background: var(--gold);
+  box-shadow: 0 0 0 4px var(--gold-soft);
 }
 
 .tabs {
@@ -686,12 +699,6 @@
     flex-direction: column;
     align-items: flex-start;
   }
-  .steps {
-    gap: 6px 14px;
-  }
-  .steps li {
-    font-size: 0.8125rem;
-  }
   .sentence {
     --px: 8px;
   }
@@ -707,20 +714,26 @@
     font-size: 12px;
   }
 }
-@media (max-width: 480px) {
-  /* five steps in one line: numbers hidden, the order reads anyway */
-  .steps {
-    gap: 6px 12px;
-  }
-  .num {
-    display: none;
+@media (max-width: 640px) {
+  /* five steps in one line: the rail with every dot, the name only for the
+     current step (the others stay for screen readers); the caption under the
+     request explains the step anyway */
+  .steps li:not([data-on]) .stepName {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
   }
 }
 @media (prefers-reduced-motion: reduce) {
   .tile,
   .tag,
   .panel li,
-  .steps li::after,
+  .steps li,
+  .steps li::before,
+  .dot,
   .check,
   .node circle,
   .node rect {

@@ -105,6 +105,17 @@ function relayout(box: HTMLElement, tiles: HTMLElement[], change: () => void, du
   if (Math.abs(h0 - h1) > 0.5) gsap.fromTo(box, { height: h0 }, { height: h1, duration, ease: "power3.inOut", clearProps: "height" });
 }
 
+/* Removes the line snapshots relayout leaves while they fade. Searched from
+   the scene's lasting text block, not from the line: when the example changes,
+   React detaches the old line before the cleanup runs, and the reverted fade
+   would leave the old request on top of the new one at full opacity. */
+function clearGhosts(root: HTMLElement) {
+  root.querySelectorAll<HTMLElement>("[data-ghost]").forEach((g) => {
+    gsap.killTweensOf(g);
+    g.remove();
+  });
+}
+
 export default function Inside({ bare = false }: { bare?: boolean }) {
   const [ex, setEx] = useState(0);
   const [step, setStep] = useState<Step>(0);
@@ -258,6 +269,7 @@ export default function Inside({ bare = false }: { bare?: boolean }) {
       }
       delete box.dataset.spread;
       ans.style.display = "";
+      clearGhosts(text);
     };
     reset();
 
@@ -438,10 +450,7 @@ export default function Inside({ bare = false }: { bare?: boolean }) {
       const loose = [...reqTiles, ...ansTiles, ...ansMask, box, ans];
       gsap.killTweensOf(loose);
       gsap.set(loose, { clearProps: "transform,opacity,height" });
-      box.parentElement?.querySelectorAll("[data-ghost]").forEach((g) => {
-        gsap.killTweensOf(g);
-        g.remove();
-      });
+      clearGhosts(text);
     };
   }, [ex, width, run]);
 
@@ -452,8 +461,14 @@ export default function Inside({ bare = false }: { bare?: boolean }) {
           <div className={styles.top}>
             <ol className={styles.steps} aria-label="Processing steps">
               {STEPS.map((s, i) => (
-                <li key={s} data-on={i === step || undefined} data-done={i < step || undefined}>
-                  {s}
+                <li
+                  key={s}
+                  data-on={i === step || undefined}
+                  data-done={i < step || undefined}
+                  aria-current={i === step ? "step" : undefined}
+                >
+                  <span className={styles.dot} aria-hidden="true" />
+                  <span className={styles.stepName}>{s}</span>
                 </li>
               ))}
             </ol>
