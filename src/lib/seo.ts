@@ -6,6 +6,8 @@ import type { Metadata } from "next";
 
 export const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL || "https://kordon-ai.vercel.app").replace(/\/+$/, "");
 export const SITE_NAME = "Kordon AI";
+/* bump when the images in public/og change */
+export const OG_VERSION = 2;
 
 type Page = {
   /** page path: «/», «/pricing» */
@@ -22,7 +24,8 @@ type Page = {
 };
 
 export function pageMeta({ path, title, description, og, ogTitle, index = true }: Page): Metadata {
-  const image = { url: `/og/${og}.png`, width: 1200, height: 630, alt: ogTitle ?? title };
+  /* ?v — the preview version: messengers cache the image by its URL */
+  const image = { url: `/og/${og}.png?v=${OG_VERSION}`, width: 1200, height: 630, alt: ogTitle ?? title };
   return {
     title: path === "/" ? { absolute: title } : title,
     description,

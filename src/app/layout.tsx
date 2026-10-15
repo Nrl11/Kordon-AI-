@@ -4,7 +4,7 @@ import Nav from "@/components/Nav";
 import OffscreenPause from "@/components/OffscreenPause";
 import SmoothScroll from "@/components/SmoothScroll";
 import CookieBanner from "@/components/CookieBanner";
-import { SITE_NAME, SITE_URL } from "@/lib/seo";
+import { OG_VERSION, SITE_NAME, SITE_URL } from "@/lib/seo";
 import { brand, display, text } from "./fonts";
 import "./globals.css";
 
@@ -23,9 +23,9 @@ export const metadata: Metadata = {
     type: "website",
     locale: "en_US",
     siteName: SITE_NAME,
-    images: [{ url: "/og/home.png", width: 1200, height: 630, alt: "Kordon AI — security that pays for itself" }],
+    images: [{ url: `/og/home.png?v=${OG_VERSION}`, width: 1200, height: 630, alt: "Kordon AI — security that pays for itself" }],
   },
-  twitter: { card: "summary_large_image", images: ["/og/home.png"] },
+  twitter: { card: "summary_large_image", images: [`/og/home.png?v=${OG_VERSION}`] },
 };
 
 /* Schema.org markup: who makes the product and what the site is */
