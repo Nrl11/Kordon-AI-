@@ -57,7 +57,8 @@ the cursor or keyboard focus (`lib/useCycle.ts`). With “reduce motion” they 
 
 ## Before launch
 
-- **Company details.** Fill in `LEGAL` in `src/lib/site.ts` — the legal name and an email for privacy requests.
+- **Company details.** `LEGAL` in `src/lib/site.ts` holds TalentMind AI Corp's details (footer, privacy policy,
+  Schema.org) — still to fill in: an email for privacy requests.
 - **Where requests go.** Email and/or a Telegram chat — see `docs/leads-email.md` and `docs/leads-telegram.md`.
 - **Privacy policy.** `src/app/privacy/page.tsx` — have counsel review it.
 - **Hosting.** `docs/deploy.md` — Vercel, Docker or a Node server behind nginx.

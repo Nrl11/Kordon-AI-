@@ -5,6 +5,7 @@ import OffscreenPause from "@/components/OffscreenPause";
 import SmoothScroll from "@/components/SmoothScroll";
 import CookieBanner from "@/components/CookieBanner";
 import { OG_VERSION, SITE_NAME, SITE_URL } from "@/lib/seo";
+import { LEGAL } from "@/lib/site";
 import { brand, display, text } from "./fonts";
 import "./globals.css";
 
@@ -34,9 +35,18 @@ const JSON_LD = [
     "@context": "https://schema.org",
     "@type": "Organization",
     name: SITE_NAME,
+    legalName: LEGAL.name,
     url: SITE_URL,
     logo: `${SITE_URL}/icon.svg`,
     description: "An enterprise AI gateway: every request from employees and AI agents to AI models goes through one gateway inside the company network.",
+    address: {
+      "@type": "PostalAddress",
+      streetAddress: LEGAL.street,
+      addressLocality: LEGAL.city,
+      addressRegion: LEGAL.region,
+      postalCode: LEGAL.zip,
+      addressCountry: "US",
+    },
   },
   {
     "@context": "https://schema.org",

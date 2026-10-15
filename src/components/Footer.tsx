@@ -1,12 +1,14 @@
 import Link from "next/link";
-import { CTA, FOOTER, LEGAL, PRIVACY } from "@/lib/site";
+import { SITE_NAME } from "@/lib/seo";
+import { CTA, FOOTER, LEGAL, LEGAL_ADDRESS_LINES, PRIVACY } from "@/lib/site";
 import { Logo } from "./Logo";
 import PageNotes from "./PageNotes";
 import ConsentLink from "./ConsentLink";
 import styles from "./Footer.module.css";
 
 /* Footer: the mark, one line and the button on the left; the site map on the
-   right; at the bottom — the company name, the privacy policy and cookie settings. */
+   right; at the bottom — the company behind the product with its address, the
+   privacy policy and cookie settings. */
 export default function Footer() {
   return (
     <footer className={styles.footer}>
@@ -34,7 +36,16 @@ export default function Footer() {
         </nav>
         <PageNotes />
         <div className={styles.legal}>
-          <span>© 2026 {LEGAL.name}</span>
+          <address className={styles.company}>
+            <span>
+              {SITE_NAME} is a product of {LEGAL.name}
+            </span>
+            <span>
+              <span className={styles.chunk}>© 2026 {LEGAL.name} ·</span>{" "}
+              <span className={styles.chunk}>{LEGAL_ADDRESS_LINES[0]},</span>{" "}
+              <span className={styles.chunk}>{LEGAL_ADDRESS_LINES[1]}</span>
+            </span>
+          </address>
           <span className={styles.legalLinks}>
             <Link href={PRIVACY.href}>{PRIVACY.label}</Link>
             <ConsentLink className={styles.legalBtn} />

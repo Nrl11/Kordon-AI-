@@ -15,13 +15,27 @@ export const NAV = [
 
 export const CTA = { href: "/start", label: "Talk to us" } as const;
 
-/* The only way to reach us on the site is the request form on /start.
-   TODO: fill in before launch — the legal name of the company that operates
-   the site and an email for privacy requests. Empty values are not shown. */
+/* The company that operates the site and makes Kordon AI — as in its Florida
+   Articles of Incorporation (filed May 8, 2026). The only way to reach us on
+   the site is the request form on /start.
+   TODO: fill in before launch — an email for privacy requests. Empty values are not shown. */
 export const LEGAL = {
-  name: "Kordon AI",
+  name: "TalentMind AI Corp",
+  kind: "Florida profit corporation",
+  docNumber: "P26000025453",
+  street: "1850 S Ocean Dr, Unit 1203",
+  city: "Hallandale Beach",
+  region: "FL",
+  zip: "33009",
+  country: "USA",
   privacyEmail: "",
 } as const;
+/* the address as two lines — street, then city: a narrow screen wraps between them */
+export const LEGAL_ADDRESS_LINES = [
+  LEGAL.street,
+  `${LEGAL.city}, ${LEGAL.region} ${LEGAL.zip}, ${LEGAL.country}`,
+] as const;
+export const LEGAL_ADDRESS = LEGAL_ADDRESS_LINES.join(", ");
 export const PRIVACY = { href: "/privacy", label: "Privacy Policy" } as const;
 
 export const FOOTER = [

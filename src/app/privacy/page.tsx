@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { pageMeta, SITE_URL } from "@/lib/seo";
-import { LEGAL } from "@/lib/site";
+import { pageMeta, SITE_NAME, SITE_URL } from "@/lib/seo";
+import { LEGAL, LEGAL_ADDRESS, LEGAL_ADDRESS_LINES } from "@/lib/site";
 import { nb } from "@/lib/typo";
 import styles from "@/components/legal/Legal.module.css";
 
@@ -9,13 +9,13 @@ export const metadata: Metadata = pageMeta({
   path: "/privacy",
   title: "Privacy Policy",
   description:
-    "How Kordon AI handles the personal information of website visitors: what we collect, why, who we share it with, how long we keep it and how to use your privacy rights.",
+    "How TalentMind AI Corp, the company behind Kordon AI, handles the personal information of website visitors: what we collect, why, who we share it with and your rights.",
   og: "privacy",
 });
 
 /* A privacy policy for the website only: the request form, cookies and
    analytics. It is written with US state privacy laws (CCPA/CPRA and similar)
-   and the GDPR in mind. The operator's legal name and a privacy email come from
+   and the GDPR in mind. The operator's details and a privacy email come from
    LEGAL in lib/site.ts — have counsel review the text before launch. */
 
 const HOST = SITE_URL.replace(/^https?:\/\//, "");
@@ -34,23 +34,47 @@ const TOC = [
   { id: "changes", title: "Changes to this policy" },
 ];
 
+/* The policy in four cells, set like the gateway's decision panel on the home
+   page: label above value, a dot for the kind of answer (gold — a fact about
+   your data, green — a promise in your favor). Each cell opens its section. */
+const BRIEF = [
+  { id: "general", k: "Responsible", v: LEGAL.name, tone: "gold" },
+  { id: "data", k: "We collect", v: "Form details and basic browser data", tone: "gold" },
+  { id: "sharing", k: "Sold or used for ads", v: "Never", tone: "green" },
+  { id: "storage", k: "Kept", v: "Requests — up to 3 years", tone: "gold" },
+] as const;
+
 export default function Privacy() {
   return (
     <>
       <section className="page-head">
-        <div className="wrap">
-          <nav className="crumbs" aria-label="Breadcrumbs">
-            <Link href="/">Home</Link>
-            <span aria-hidden="true">/</span>
-            <span aria-current="page">Privacy Policy</span>
-          </nav>
-          <h1 className="h1-page">Privacy Policy</h1>
-          <p className="page-lead">
-            {nb(
-              `How ${LEGAL.name} handles the personal information of people who visit ${HOST}: what we collect, why, who we share it with and the choices you have`,
-            )}
-          </p>
-          <p className={styles.meta}>Last updated October 15, 2026</p>
+        <div className="wrap page-grid">
+          <div>
+            <h1 className="h1-page">Privacy Policy</h1>
+            <p className="page-lead">
+              {nb(
+                `What personal information ${LEGAL.name} collects through this site, why, who sees it and the choices you have`,
+              )}
+            </p>
+            <p className={styles.meta}>
+              Last updated <time dateTime="2026-10-15">October 15, 2026</time>
+            </p>
+          </div>
+          <aside className={styles.brief} aria-labelledby="brief-title">
+            <p id="brief-title" className={styles.briefTitle}>
+              Your data on this site
+            </p>
+            <ul>
+              {BRIEF.map((b) => (
+                <li key={b.id} data-tone={b.tone}>
+                  <a href={`#${b.id}`}>
+                    <span>{b.k}</span>
+                    <b>{nb(b.v)}</b>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </aside>
         </div>
       </section>
 
@@ -71,8 +95,27 @@ export default function Privacy() {
             <section id="general">
               <h2>Who we are</h2>
               <p>
+                {nb(`${LEGAL.name} (“we”, “us”) is the company behind ${SITE_NAME} and operates `)}
+                <span className={styles.host}>{HOST}</span>
                 {nb(
-                  `${LEGAL.name} (“we”, “us”) operates ${HOST}. This policy covers the personal information we collect through this website — when you browse it or send us a request. It does not cover the Kordon gateway itself: inside a customer’s network the gateway is run by that customer, and the data it handles stays with them.`,
+                  ". We decide how and why the personal information described here is processed — under the GDPR, we are its controller.",
+                )}
+              </p>
+              <dl className={styles.terms}>
+                <dt>Company</dt>
+                <dd>{LEGAL.name}</dd>
+                <dt>Type</dt>
+                <dd>{LEGAL.kind}</dd>
+                <dt>Document number</dt>
+                <dd>{LEGAL.docNumber}, Florida Department of State</dd>
+                <dt>Address</dt>
+                <dd>{LEGAL_ADDRESS}</dd>
+                <dt>Product</dt>
+                <dd>{SITE_NAME}</dd>
+              </dl>
+              <p>
+                {nb(
+                  "This policy covers the personal information we collect through this website — when you browse it or send us a request. It does not cover the Kordon gateway itself: inside a customer’s network the gateway is run by that customer, and the data it handles stays with them.",
                 )}
               </p>
               <p>We follow a few simple principles:</p>
@@ -225,6 +268,13 @@ export default function Privacy() {
                   </>
                 )}
               </p>
+              <p>{nb("You can also write to us by mail:")}</p>
+              <address className={styles.card}>
+                <b>{LEGAL.name}</b>
+                {LEGAL_ADDRESS_LINES.map((line) => (
+                  <span key={line}>{line}</span>
+                ))}
+              </address>
               <p>{nb("We reply within 45 days, or sooner where the law requires.")}</p>
             </section>
 

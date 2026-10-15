@@ -123,11 +123,22 @@
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
+  align-items: flex-start;
   gap: 8px 24px;
   padding-top: 24px;
   border-top: 1px solid var(--on-ink-rule);
   font-size: var(--t-small);
   color: var(--on-ink-2);
+}
+/* who runs the site: the product line, then the copyright and the address */
+.company {
+  display: grid;
+  gap: 2px;
+  font-style: normal;
+}
+/* the line wraps only between the name, the street and the city */
+.chunk {
+  white-space: nowrap;
 }
 
 .legalLinks {
@@ -157,6 +168,16 @@
   outline: 2px solid var(--gold);
   outline-offset: 3px;
   border-radius: 4px;
+}
+
+/* touch screens: the policy link and cookie settings are at least 44px tall */
+@media (pointer: coarse) {
+  .legalLinks a,
+  .legalBtn {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+  }
 }
 
 @media (max-width: 860px) {
